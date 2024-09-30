@@ -1,0 +1,111 @@
+@startuml
+hide methods
+
+Title Library Management Domain Model
+
+Package "User Aggregate" {
+    class User << (E,#dedede) AggregateRoot >> {}
+}
+
+Package "Role Aggregate" {
+
+    class Role << (E,#dedede) AggregateRoot >> {}
+
+    Package "Author Aggregate" {
+        class Author << (E,#dedede) AggregateRoot >> {}
+
+        class AuthorNumber << Identity >> << ValueObject >>
+        class Name << ValueObject >>
+        class ShortBio << ValueObject >>
+        class Photo << ValueObject >>
+
+        Author "1" --down> "1" AuthorNumber : is identified by
+        Author "1" --down> "1" Name : has a
+        Author "1" --down> "1" ShortBio : has a
+        Author "1" --down> "0..1" Photo : has a
+
+    }
+
+    Package "Reader Aggregate" {
+        class Reader << (E,#dedede) AggregateRoot >> {}
+
+        class ReaderNumber << Identity >> << ValueObject >>
+        class Name << ValueObject >>
+        class Email << ValueObject >>
+        class DateOfBirth << ValueObject >>
+        class PhoneNumber << ValueObject >>
+        class GdprConsent << ValueObject >>
+        class Photo << ValueObject >>
+
+        Reader "1" --down> "1" ReaderNumber : is identified by
+        Reader "1" --down> "1" Email : has a
+        Reader "1" --down> "1" PhoneNumber : has a
+        Reader "1" --down> "1" Name : has a
+        Reader "1" --down> "1" DateOfBirth : has a
+        Reader "1" --down> "1" GdprConsent : has a
+        Reader "1" --down> "0..1" Photo : has a
+    }
+
+    Package "Librarian Aggregate" {
+        class Librarian << (E,#dedede) AggregateRoot >> {}
+    }
+
+    Role "1" -- "0..1" Reader : "can be"
+    Role "1" -- "0..1" Librarian : "can be"
+    Role "1" -- "0..1" Author : "can be"
+}
+
+
+Package "Book Aggregate" {
+    class Book << (E,#dedede) AggregateRoot >> {}
+
+    object Isbn << Identity >>
+    object Title << ValueObject >>
+    object Description << ValueObject >>
+    object CoverPhoto << ValueObject >>
+
+    Book "1" --down> "1" Isbn : is identified by
+    Book "1" --down> "1" Title : has a
+    Book "1" --down> "1" Description : has a
+    Book "1" --down> "0..1" CoverPhoto : has a
+}
+
+Package "Genre Aggregate" {
+    class Genre << (E,#dedede) AggregateRoot >> {}
+}
+
+Package "Lending Aggregate" {
+    class Lending << (E,#dedede) AggregateRoot >> {}
+
+    object LendingNumber << Identity >>
+    object StartDate << ValueObject >>
+    object LimitDate << ValueObject >>
+    object ReturnedDate << ValueObject >>
+    object FineValuePerDay << ValueObject >>
+
+    Lending "1" --down> "1" LendingNumber : is identified by
+    Lending "1" --down> "1" StartDate : has a
+    Lending "1" --down> "1" LimitDate : has a
+    Lending "1" --down> "1" ReturnedDate : has a
+    Lending "1" --down> "1" FineValuePerDay : has a
+}
+
+Package "Fine Aggregate" {
+    class Fine << (E,#dedede) AggregateRoot >>  {}
+
+    class Value << ValueObject >>
+
+    Fine "1" --down> "1" Value : has a
+}
+
+Book "1" --down> "1.*" Author : has a
+Book "1" --down> "1" Genre : has a
+Reader "1" --down> "0.*" Genre : has preferences of
+Reader "1" --down> "0..3" Lending : can lend books
+Lending "1" --- "0..1" Book : associated to a
+Fine "0..1" --- "1" Lending : "has a"
+User "0..1" --- "1" Lending : "has a"
+User "1" --- "0.*" Fine : "may need to pay"
+User "1" --down> "1" Role : has a
+
+@enduml
