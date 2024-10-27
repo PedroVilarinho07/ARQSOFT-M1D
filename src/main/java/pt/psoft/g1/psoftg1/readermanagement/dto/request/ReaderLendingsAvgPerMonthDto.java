@@ -1,4 +1,4 @@
-package pt.psoft.g1.psoftg1.readermanagement.services;
+package pt.psoft.g1.psoftg1.readermanagement.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;

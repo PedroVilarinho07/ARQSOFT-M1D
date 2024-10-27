@@ -5,8 +5,13 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
-import pt.psoft.g1.psoftg1.genremanagement.services.GenreService;
-import pt.psoft.g1.psoftg1.genremanagement.services.GetAverageLendingsQuery;
+import pt.psoft.g1.psoftg1.genremanagement.dto.response.GenreLendingsResponseDTO;
+import pt.psoft.g1.psoftg1.genremanagement.dto.response.GenreBookCountResponseDTO;
+import pt.psoft.g1.psoftg1.genremanagement.dto.response.GenreLendingsAvgPerMonthResponseDTO;
+import pt.psoft.g1.psoftg1.genremanagement.dto.response.GenreLendingsCountPerMonthResponseDTO;
+import pt.psoft.g1.psoftg1.genremanagement.mappers.GenreMapper;
+import pt.psoft.g1.psoftg1.genremanagement.services.IGenreService;
+import pt.psoft.g1.psoftg1.genremanagement.dto.request.GetAverageLendingsQuery;
 import pt.psoft.g1.psoftg1.shared.api.ListResponse;
 import pt.psoft.g1.psoftg1.shared.services.SearchRequest;
 
@@ -15,49 +20,50 @@ import pt.psoft.g1.psoftg1.shared.services.SearchRequest;
 @RequiredArgsConstructor
 @RequestMapping("/api/genres")
 public class GenreController {
-    private final GenreService genreService;
-    private final GenreViewMapper genreViewMapper;
+
+    private final IGenreService IGenreService;
+    private final GenreMapper genreMapper;
 
     @PostMapping(value="/avgLendingsPerGenre")
-    public ListResponse<GenreLendingsView> getAverageLendings(
+    public ListResponse<GenreLendingsResponseDTO> getAverageLendings(
             @Valid @RequestBody final SearchRequest<GetAverageLendingsQuery> query){
-        final var list = genreService.getAverageLendings(query.getQuery(), query.getPage());
-        return new ListResponse<>(genreViewMapper.toGenreAvgLendingsView(list));
+        final var list = IGenreService.getAverageLendings(query.getQuery(), query.getPage());
+        return new ListResponse<>(genreMapper.toGenreAvgLendingsResponseDTO(list));
     }
 
     @GetMapping("/top5")
-    public ListResponse<GenreBookCountView> getTop() {
-        final var list = genreService.findTopGenreByBooks();
+    public ListResponse<GenreBookCountResponseDTO> getTop() {
+        final var list = IGenreService.findTopGenreByBooks();
 
         if(list.isEmpty())
             throw new NotFoundException("No genres to show");
 
-        return new ListResponse<>(genreViewMapper.toGenreBookCountView(list));
+        return new ListResponse<>(genreMapper.toGenreBookCountResponseDTO(list));
     }
 
     @GetMapping("/lendingsPerMonthLastTwelveMonths")
-    public ListResponse<GenreLendingsCountPerMonthView> getLendingsPerMonthLastYearByGenre() {
-        final var list = genreService.getLendingsPerMonthLastYearByGenre();
+    public ListResponse<GenreLendingsCountPerMonthResponseDTO> getLendingsPerMonthLastYearByGenre() {
+        final var list = IGenreService.getLendingsPerMonthLastYearByGenre();
 
         if(list.isEmpty())
             throw new NotFoundException("No genres to show");
 
-        final var viewList = genreViewMapper.toGenreLendingsCountPerMonthView(list);
+        final var viewList = genreMapper.toGenreLendingsCountPerMonthView(list);
 
         return new ListResponse<>(viewList);
     }
 
     @GetMapping("/lendingsAverageDurationPerMonth")
-    public ListResponse<GenreLendingsAvgPerMonthView> getLendingsAverageDurationPerMonth(
+    public ListResponse<GenreLendingsAvgPerMonthResponseDTO> getLendingsAverageDurationPerMonth(
             @RequestParam("startDate") final String start,
             @RequestParam("endDate") final String end) {
-        final var list = genreService.getLendingsAverageDurationPerMonth(start, end);
+        final var list = IGenreService.getLendingsAverageDurationPerMonth(start, end);
 
         if(list.isEmpty())
             throw new NotFoundException("No genres to show");
 
-        final var viewList = genreViewMapper.toGenreLendingsAveragePerMonthView(list);
+        final var responseList = genreMapper.toGenreLendingsAveragePerMonthResponseDTO(list);
 
-        return new ListResponse<>(viewList);
+        return new ListResponse<>(responseList);
     }
 }

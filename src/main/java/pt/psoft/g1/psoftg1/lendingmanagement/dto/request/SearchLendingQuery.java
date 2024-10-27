@@ -1,4 +1,4 @@
-package pt.psoft.g1.psoftg1.lendingmanagement.services;
+package pt.psoft.g1.psoftg1.lendingmanagement.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

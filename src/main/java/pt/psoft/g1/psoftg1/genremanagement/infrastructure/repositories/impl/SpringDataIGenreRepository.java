@@ -1,3 +1,4 @@
+/*
 package pt.psoft.g1.psoftg1.genremanagement.infrastructure.repositories.impl;
 
 import jakarta.persistence.EntityManager;
@@ -12,17 +13,17 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
-import pt.psoft.g1.psoftg1.bookmanagement.services.GenreBookCountDTO;
+import pt.psoft.g1.psoftg1.bookmanagement.dto.request.GenreBookCountDTO;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
-import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
-import pt.psoft.g1.psoftg1.genremanagement.services.GenreLendingsDTO;
-import pt.psoft.g1.psoftg1.genremanagement.services.GenreLendingsPerMonthDTO;
+import pt.psoft.g1.psoftg1.genremanagement.repositories.IGenreRepository;
+import pt.psoft.g1.psoftg1.genremanagement.dto.GenreLendingsDTO;
+import pt.psoft.g1.psoftg1.genremanagement.dto.GenreLendingsPerMonthDTO;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 
 import java.time.LocalDate;
 import java.util.*;
 
-public interface SpringDataGenreRepository extends GenreRepository, GenreRepoCustom, CrudRepository<Genre, Integer> {
+public interface SpringDataIGenreRepository extends IGenreRepository, GenreRepoCustom, CrudRepository<Genre, Integer> {
 
     @Query("SELECT g FROM Genre g")
     List<Genre> findAllGenres();
@@ -196,3 +197,5 @@ class GenreRepoCustomImpl implements GenreRepoCustom {
         return lendingsPerMonth;
     }
 }
+
+ */

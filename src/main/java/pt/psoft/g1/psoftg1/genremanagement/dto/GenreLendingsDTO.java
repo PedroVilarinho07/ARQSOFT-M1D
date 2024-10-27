@@ -1,4 +1,4 @@
-package pt.psoft.g1.psoftg1.genremanagement.services;
+package pt.psoft.g1.psoftg1.genremanagement.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

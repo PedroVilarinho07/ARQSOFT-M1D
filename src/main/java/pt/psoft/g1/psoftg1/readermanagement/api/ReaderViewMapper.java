@@ -5,8 +5,11 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
+import pt.psoft.g1.psoftg1.readermanagement.dto.response.ReaderCountResponseDTO;
+import pt.psoft.g1.psoftg1.readermanagement.dto.response.ReaderQuoteResponseDTO;
+import pt.psoft.g1.psoftg1.readermanagement.dto.response.ReaderResponseDTO;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
-import pt.psoft.g1.psoftg1.readermanagement.services.ReaderBookCountDTO;
+import pt.psoft.g1.psoftg1.readermanagement.dto.request.ReaderBookCountDTO;
 import pt.psoft.g1.psoftg1.shared.api.MapperInterface;
 
 import java.util.ArrayList;
@@ -22,28 +25,15 @@ public abstract class ReaderViewMapper extends MapperInterface {
     @Mapping(target = "phoneNumber", source = "phoneNumber")
     @Mapping(target = "gdprConsent", source = "gdprConsent")
     @Mapping(target = "readerNumber", source = "readerNumber")
+    @Mapping(target = "marketingConsent", source = "marketingConsent")
     @Mapping(target = "photo", expression = "java(generatePhotoUrl(readerDetails))")
     @Mapping(target = "interestList", expression = "java(mapInterestList(readerDetails.getInterestList()))")
-    public abstract ReaderView toReaderView(ReaderDetails readerDetails);
-
-    @Named(value = "toReaderQuoteView")
-    @Mapping(target = "fullName", source = "reader.name.name")
-    @Mapping(target = "email", source = "reader.username")
-    @Mapping(target = "birthDate", source = "birthDate.birthDate")
-    @Mapping(target = "phoneNumber", source = "phoneNumber")
-    @Mapping(target = "gdprConsent", source = "gdprConsent")
-    @Mapping(target = "readerNumber", source = "readerNumber")
-    @Mapping(target = "photo", expression = "java(generatePhotoUrl(readerDetails))")
-    @Mapping(target = "interestList", expression = "java(mapInterestList(readerDetails.getInterestList()))")
-    public abstract ReaderQuoteView toReaderQuoteView(ReaderDetails readerDetails);
+    public abstract ReaderResponseDTO toReaderView(ReaderDetails readerDetails);
 
     @Mapping(target = ".", qualifiedByName = "toReaderView")
-    public abstract List<ReaderView> toReaderView(Iterable<ReaderDetails> readerList);
+    public abstract List<ReaderResponseDTO> toReaderView(Iterable<ReaderDetails> readerList);
 
-   @Mapping(target = "readerView", source = "readerDetails")
-    public abstract ReaderCountView toReaderCountView(ReaderBookCountDTO readerBookCountDTO);
-
-    public abstract List<ReaderCountView> toReaderCountViewList(List<ReaderBookCountDTO> readerBookCountDTOList);
+    public abstract List<ReaderCountResponseDTO> toReaderCountViewList(List<ReaderBookCountDTO> readerBookCountDTOList);
 
 
     protected String generatePhotoUrl(ReaderDetails readerDetails) {

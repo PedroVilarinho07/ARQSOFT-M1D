@@ -1,4 +1,4 @@
-package pt.psoft.g1.psoftg1.lendingmanagement.api;
+package pt.psoft.g1.psoftg1.lendingmanagement.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
@@ -10,13 +10,13 @@ import java.time.LocalDate;
 
 @Data
 @Schema(description = "A Lending")
-public class LendingView {
+public class LendingResponseDTO {
 
     @NotNull
     private String lendingNumber;
 
     @NotNull
-    private String bookTitle;
+    private String isbn;
 
     @NotNull
     private LocalDate startDate;
@@ -34,7 +34,7 @@ public class LendingView {
 
     @Setter
     @Getter
-    private LendingLinksView _links;
+    private LendingLinksResponseDTO _links;
 }
 
 /*>

@@ -14,11 +14,14 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import pt.psoft.g1.psoftg1.bookmanagement.dto.response.BookAverageLendingDurationResponseDTO;
+import pt.psoft.g1.psoftg1.bookmanagement.dto.response.BookCountResponseDTO;
+import pt.psoft.g1.psoftg1.bookmanagement.dto.response.BookResponseDTO;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.services.BookService;
-import pt.psoft.g1.psoftg1.bookmanagement.services.CreateBookRequest;
-import pt.psoft.g1.psoftg1.bookmanagement.services.SearchBooksQuery;
-import pt.psoft.g1.psoftg1.bookmanagement.services.UpdateBookRequest;
+import pt.psoft.g1.psoftg1.bookmanagement.dto.request.CreateBookRequest;
+import pt.psoft.g1.psoftg1.bookmanagement.dto.request.SearchBooksQuery;
+import pt.psoft.g1.psoftg1.bookmanagement.dto.request.UpdateBookRequest;
 import pt.psoft.g1.psoftg1.exceptions.ConflictException;
 import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
 import pt.psoft.g1.psoftg1.lendingmanagement.services.LendingService;
@@ -54,7 +57,7 @@ public class BookController {
     @Operation(summary = "Register a new Book")
     @PutMapping(value = "/{isbn}")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<BookView> create( CreateBookRequest resource, @PathVariable("isbn") String isbn) {
+    public ResponseEntity<BookResponseDTO> create(CreateBookRequest resource, @PathVariable("isbn") String isbn) {
 
 
         //Guarantee that the client doesn't provide a link on the body, null = no photo or error
@@ -79,21 +82,19 @@ public class BookController {
                 .build().toUri();
 
         return ResponseEntity.created(newBookUri)
-                .eTag(Long.toString(book.getVersion()))
                 .body(bookViewMapper.toBookView(book));
     }
 
     @Operation(summary = "Gets a specific Book by isbn")
     @GetMapping(value = "/{isbn}")
-    public ResponseEntity<BookView> findByIsbn(@PathVariable final String isbn) {
+    public ResponseEntity<BookResponseDTO> findByIsbn(@PathVariable final String isbn) {
 
         final var book = bookService.findByIsbn(isbn);
 
-        BookView bookView = bookViewMapper.toBookView(book);
+        BookResponseDTO bookResponseDTO = bookViewMapper.toBookView(book);
 
         return ResponseEntity.ok()
-                .eTag(Long.toString(book.getVersion()))
-                .body(bookView);
+                .body(bookResponseDTO);
     }
 
     @Operation(summary = "Deletes a book photo")
@@ -106,7 +107,6 @@ public class BookController {
         }
 
         fileStorageService.deleteFile(book.getPhoto().getPhotoFile());
-        bookService.removeBookPhoto(book.getIsbn(), book.getVersion());
 
         return ResponseEntity.ok().build();
     }
@@ -138,9 +138,9 @@ public class BookController {
 
     @Operation(summary = "Updates a specific Book")
     @PatchMapping(value = "/{isbn}")
-    public ResponseEntity<BookView> updateBook(@PathVariable final String isbn,
-                                               final WebRequest request,
-                                               @Valid final UpdateBookRequest resource) {
+    public ResponseEntity<BookResponseDTO> updateBook(@PathVariable final String isbn,
+                                                      final WebRequest request,
+                                                      @Valid final UpdateBookRequest resource) {
 
         final String ifMatchValue = request.getHeader(ConcurrencyService.IF_MATCH);
         if (ifMatchValue == null || ifMatchValue.isEmpty() || ifMatchValue.equals("null")) {
@@ -164,15 +164,14 @@ public class BookController {
             throw new ConflictException("Could not update book: "+ e.getMessage());
         }
         return ResponseEntity.ok()
-                .eTag(Long.toString(book.getVersion()))
                 .body(bookViewMapper.toBookView(book));
     }
 
     @Operation(summary = "Gets Books by title or genre")
     @GetMapping
-    public ListResponse<BookView> findBooks(@RequestParam(value = "title", required = false) final String title,
-                                            @RequestParam(value = "genre", required = false) final String genre,
-                                            @RequestParam(value = "authorName", required = false) final String authorName) {
+    public ListResponse<BookResponseDTO> findBooks(@RequestParam(value = "title", required = false) final String title,
+                                                   @RequestParam(value = "genre", required = false) final String genre,
+                                                   @RequestParam(value = "authorName", required = false) final String authorName) {
 
         //Este método, como está, faz uma junção 'OR'.
         //Para uma junção 'AND', ver o "/search"
@@ -209,13 +208,13 @@ public class BookController {
 
     @Operation(summary = "Gets the top 5 books lent")
     @GetMapping("top5")
-    public ListResponse<BookCountView> getTop5BooksLent() {
+    public ListResponse<BookCountResponseDTO> getTop5BooksLent() {
         return new ListResponse<>(bookViewMapper.toBookCountView(bookService.findTop5BooksLent()));
     }
 
     @Operation(summary = "Gets some books suggestions based on the reader's interests")
     @GetMapping("suggestions")
-    public ListResponse<BookView> getBooksSuggestions(Authentication authentication) {
+    public ListResponse<BookResponseDTO> getBooksSuggestions(Authentication authentication) {
         User loggedUser = userService.getAuthenticatedUser(authentication);
         ReaderDetails readerDetails = readerService.findByUsername(loggedUser.getUsername())
                 .orElseThrow(() -> new NotFoundException(ReaderDetails.class, loggedUser.getUsername()));
@@ -225,7 +224,7 @@ public class BookController {
 
     @Operation(summary = "Get average lendings duration")
     @GetMapping(value = "/{isbn}/avgDuration")
-    public @ResponseBody ResponseEntity<BookAverageLendingDurationView>getAvgLendingDurationByIsbn(
+    public @ResponseBody ResponseEntity<BookAverageLendingDurationResponseDTO>getAvgLendingDurationByIsbn(
             @PathVariable("isbn") final String isbn) {
         final var book = bookService.findByIsbn(isbn);
         Double avgDuration = lendingService.getAvgLendingDurationByIsbn(isbn);
@@ -234,7 +233,7 @@ public class BookController {
     }
 
     @PostMapping("/search")
-    public ListResponse<BookView> searchBooks(
+    public ListResponse<BookResponseDTO> searchBooks(
             @RequestBody final SearchRequest<SearchBooksQuery> request) {
         final var bookList = bookService.searchBooks(request.getPage(), request.getQuery());
         return new ListResponse<>(bookViewMapper.toBookView(bookList));

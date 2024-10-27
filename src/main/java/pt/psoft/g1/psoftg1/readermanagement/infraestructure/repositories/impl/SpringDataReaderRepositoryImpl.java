@@ -1,3 +1,5 @@
+/*
+
 package pt.psoft.g1.psoftg1.readermanagement.infraestructure.repositories.impl;
 
 import jakarta.persistence.EntityManager;
@@ -10,12 +12,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.util.StringUtils;
-import pt.psoft.g1.psoftg1.readermanagement.services.SearchReadersQuery;
+import pt.psoft.g1.psoftg1.readermanagement.dto.request.SearchReadersQuery;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
 
 import org.springframework.data.domain.Pageable;
-import pt.psoft.g1.psoftg1.readermanagement.services.ReaderBookCountDTO;
+import pt.psoft.g1.psoftg1.readermanagement.dto.request.ReaderBookCountDTO;
 import pt.psoft.g1.psoftg1.usermanagement.model.User;
 
 import java.time.LocalDate;
@@ -128,4 +130,6 @@ class ReaderDetailsRepoCustomImpl implements ReaderDetailsRepoCustom {
         return q.getResultList();
     }
 }
+
+ */
 

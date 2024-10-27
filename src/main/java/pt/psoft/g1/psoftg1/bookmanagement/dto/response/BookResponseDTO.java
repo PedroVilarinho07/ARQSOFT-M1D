@@ -1,4 +1,4 @@
-package pt.psoft.g1.psoftg1.bookmanagement.api;
+package pt.psoft.g1.psoftg1.bookmanagement.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
@@ -12,7 +12,7 @@ import java.util.Map;
 
 @Data
 @Schema(description = "A Book")
-public class BookView {
+public class BookResponseDTO {
     @NotNull
     private String title;
 

@@ -1,4 +1,4 @@
-package pt.psoft.g1.psoftg1.authormanagement.api;
+package pt.psoft.g1.psoftg1.authormanagement.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;

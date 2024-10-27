@@ -1,4 +1,4 @@
-package pt.psoft.g1.psoftg1.genremanagement.dto;
+package pt.psoft.g1.psoftg1.genremanagement.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -9,9 +9,9 @@ import java.util.List;
 @Data
 @Schema(description = "A Genre and its lending duration averages per month.")
 @AllArgsConstructor
-public class GenreLendingsAvgPerMonthView {
+public class GenreLendingsAvgPerMonthResponseDTO {
     private Integer year;
     private Integer month;
-    private List<GenreLendingsView> durationAverages;
+    private List<GenreLendingsResponseDTO> durationAverages;
 
 }

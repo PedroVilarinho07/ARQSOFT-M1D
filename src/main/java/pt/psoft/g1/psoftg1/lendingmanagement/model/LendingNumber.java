@@ -9,12 +9,7 @@ import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-/**
- * The {@code LendingNumber} class handles the business logic of the identifier of a {@code Lending}.
- * <p>
- * It stores the year of the lending and a sequencial number, and a string combining these two.
- * @author  rmfranca*/
-@Embeddable
+
 public class LendingNumber implements Serializable {
 
     /**
@@ -22,7 +17,6 @@ public class LendingNumber implements Serializable {
      * <p>
      * The string is constructed based on the values of {@code year} and {@code sequencial} (e.g.: 2024/23).
      */
-    @Column(name = "LENDING_NUMBER", length = 32)
     @NotNull
     @NotBlank
     @Size(min = 6, max = 32)
@@ -52,16 +46,7 @@ public class LendingNumber implements Serializable {
         if(lendingNumber == null)
             throw new IllegalArgumentException("Lending number cannot be null");
 
-        int year, sequential;
-        try {
-            year        = Integer.parseInt(lendingNumber, 0, 4, 10);
-            sequential  = Integer.parseInt(lendingNumber, 5, lendingNumber.length(), 10);
-            if(lendingNumber.charAt(4) != '/')
-                throw new IllegalArgumentException("Lending number has wrong format. It should be \"{year}/{sequential}\"");
-        }catch (NumberFormatException | IndexOutOfBoundsException e){
-            throw new IllegalArgumentException("Lending number has wrong format. It should be \"{year}/{sequential}\"");
-        }
-        this.lendingNumber = year + "/" + sequential;
+        this.lendingNumber = lendingNumber;
     }
 
     /**

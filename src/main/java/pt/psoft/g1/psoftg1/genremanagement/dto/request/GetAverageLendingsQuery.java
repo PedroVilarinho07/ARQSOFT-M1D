@@ -1,4 +1,4 @@
-package pt.psoft.g1.psoftg1.genremanagement.services;
+package pt.psoft.g1.psoftg1.genremanagement.dto.request;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

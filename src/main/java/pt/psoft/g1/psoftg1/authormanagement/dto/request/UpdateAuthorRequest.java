@@ -1,4 +1,4 @@
-package pt.psoft.g1.psoftg1.authormanagement.services;
+package pt.psoft.g1.psoftg1.authormanagement.dto.request;
 
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Size;

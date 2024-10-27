@@ -1,3 +1,4 @@
+/*
 package pt.psoft.g1.psoftg1.bookmanagement.infrastructure.repositories.impl;
 
 import jakarta.persistence.EntityManager;
@@ -12,10 +13,10 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.util.StringUtils;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
-import pt.psoft.g1.psoftg1.bookmanagement.services.BookCountDTO;
+import pt.psoft.g1.psoftg1.bookmanagement.dto.request.BookCountDTO;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Isbn;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
-import pt.psoft.g1.psoftg1.bookmanagement.services.SearchBooksQuery;
+import pt.psoft.g1.psoftg1.bookmanagement.dto.request.SearchBooksQuery;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 
 import java.time.LocalDate;
@@ -119,3 +120,4 @@ class BookRepoCustomImpl implements BookRepoCustom {
         return q.getResultList();
     }
 }
+*/

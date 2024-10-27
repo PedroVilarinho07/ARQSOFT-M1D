@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @Schema(description = "A Genre")
-public class GenreView {
+public class GenreDTO {
     @NotNull
     private String genre;
 }

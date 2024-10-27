@@ -1,4 +1,4 @@
-package pt.psoft.g1.psoftg1.bookmanagement.services;
+package pt.psoft.g1.psoftg1.bookmanagement.dto.request;
 
 
 import lombok.AllArgsConstructor;

@@ -9,7 +9,7 @@ import java.time.LocalDate;
 
 @Embeddable
 public class ReaderNumber implements Serializable {
-    @Column(name = "READER_NUMBER")
+
     private String readerNumber;
 
     public ReaderNumber(int year, int number) {
@@ -18,6 +18,10 @@ public class ReaderNumber implements Serializable {
 
     public ReaderNumber(int number) {
         this.readerNumber = LocalDate.now().getYear() + "/" + number;
+    }
+
+    public ReaderNumber(String number) {
+        this.readerNumber = number;
     }
 
     protected ReaderNumber() {}

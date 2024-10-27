@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 @Mapper(componentModel = "spring")
-public abstract class AuthorDTOMapper extends MapperInterface {
+public abstract class AuthorAPIMapper extends MapperInterface {
 
     @Mapping(target = "_links", expression = "java(mapLinks(author))")
     public abstract AuthorResponseDTO toAuthorDTO(Author author);

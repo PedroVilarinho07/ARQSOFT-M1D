@@ -10,7 +10,7 @@ import pt.psoft.g1.psoftg1.authormanagement.dto.request.CreateAuthorRequest;
 import pt.psoft.g1.psoftg1.authormanagement.dto.request.UpdateAuthorRequest;
 import pt.psoft.g1.psoftg1.authormanagement.factories.AuthorFactory;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
-import pt.psoft.g1.psoftg1.authormanagement.repositories.IAuthorRepository;
+import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
@@ -22,25 +22,25 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class AuthorServiceImpl implements AuthorService {
-    private final IAuthorRepository IAuthorRepository;
+    private final AuthorRepository AuthorRepository;
     private final BookRepository bookRepository;
-    private final AuthorMapper mapper;
+    private final AuthorServiceMapper mapper;
     private final PhotoRepository photoRepository;
     private final AuthorFactory authorFactory;
 
     @Override
     public Iterable<Author> findAll() {
-        return IAuthorRepository.findAll();
+        return AuthorRepository.findAll();
     }
 
     @Override
     public Optional<Author> findByAuthorNumber(final String authorNumber) {
-        return IAuthorRepository.findByAuthorNumber(authorNumber);
+        return AuthorRepository.findByAuthorNumber(authorNumber);
     }
 
     @Override
     public List<Author> findByName(String name) {
-        return IAuthorRepository.searchByNameNameStartsWith(name);
+        return AuthorRepository.searchByNameNameStartsWith(name);
     }
 
     @Override
@@ -63,8 +63,8 @@ public class AuthorServiceImpl implements AuthorService {
             resource.setPhoto(null);
             resource.setPhotoURI(null);
         }
-        final Author author = mapper.create(resource);
-        return IAuthorRepository.save(author);
+        Author author = authorFactory.newAuthor(resource.getName(), resource.getBio(), photoURI);
+        return AuthorRepository.save(author);
     }
 
     @Override
@@ -98,12 +98,12 @@ public class AuthorServiceImpl implements AuthorService {
         // in the meantime some other user might have changed this object on the
         // database, so concurrency control will still be applied when we try to save
         // this updated object
-        return IAuthorRepository.save(author);
+        return AuthorRepository.save(author);
     }
     @Override
     public List<AuthorLendingResponseDTO> findTopAuthorByLendings() {
         Pageable pageableRules = PageRequest.of(0,5);
-        return IAuthorRepository.findTopAuthorByLendings(pageableRules).getContent();
+        return AuthorRepository.findTopAuthorByLendings(pageableRules).getContent();
     }
 
     @Override
@@ -113,16 +113,16 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public List<Author> findCoAuthorsByAuthorNumber(String authorNumber) {
-        return IAuthorRepository.findCoAuthorsByAuthorNumber(authorNumber);
+        return AuthorRepository.findCoAuthorsByAuthorNumber(authorNumber);
     }
 
     public Optional<Author> removeAuthorPhoto(String authorNumber) {
-        Author author = IAuthorRepository.findByAuthorNumber(authorNumber)
+        Author author = AuthorRepository.findByAuthorNumber(authorNumber)
                 .orElseThrow(() -> new NotFoundException("Cannot find reader"));
 
         String photoFile = author.getPhoto().getPhotoFile();
         author.removePhoto();
-        Optional<Author> updatedAuthor = Optional.of(IAuthorRepository.save(author));
+        Optional<Author> updatedAuthor = Optional.of(AuthorRepository.save(author));
         photoRepository.deleteByPhotoFile(photoFile);
         return updatedAuthor;
     }

@@ -8,7 +8,7 @@ import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import java.util.List;
 import java.util.Optional;
 
-public interface IAuthorRepository {
+public interface AuthorRepository {
 
     Optional<Author> findByAuthorNumber(String authorNumber);
     List<Author> searchByNameNameStartsWith(String name);

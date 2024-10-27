@@ -8,10 +8,14 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.web.multipart.MultipartFile;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
+import pt.psoft.g1.psoftg1.bookmanagement.dto.request.BookCountDTO;
+import pt.psoft.g1.psoftg1.bookmanagement.dto.request.CreateBookRequest;
+import pt.psoft.g1.psoftg1.bookmanagement.dto.request.SearchBooksQuery;
+import pt.psoft.g1.psoftg1.bookmanagement.dto.request.UpdateBookRequest;
 import pt.psoft.g1.psoftg1.bookmanagement.model.*;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import lombok.RequiredArgsConstructor;
-import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
+import pt.psoft.g1.psoftg1.genremanagement.repositories.IGenreRepository;
 import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
 import pt.psoft.g1.psoftg1.exceptions.ConflictException;
 import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
@@ -32,8 +36,8 @@ import java.util.Optional;
 public class BookServiceImpl implements BookService {
 
 	private final BookRepository bookRepository;
-	private final GenreRepository genreRepository;
-	private final AuthorRepository authorRepository;
+	private final IGenreRepository IGenreRepository;
+	private final AuthorRepository AuthorRepository;
 	private final PhotoRepository photoRepository;
 	private final ReaderRepository readerRepository;
 
@@ -47,11 +51,11 @@ public class BookServiceImpl implements BookService {
 			throw new ConflictException("Book with ISBN " + isbn + " already exists");
 		}
 
-		List<Long> authorNumbers = request.getAuthors();
+		List<String> authorNumbers = request.getAuthors();
 		List<Author> authors = new ArrayList<>();
-		for (Long authorNumber : authorNumbers) {
+		for (String authorNumber : authorNumbers) {
 
-			Optional<Author> temp = authorRepository.findByAuthorNumber(authorNumber);
+			Optional<Author> temp = AuthorRepository.findByAuthorNumber(authorNumber);
 			if(temp.isEmpty()) {
 				continue;
 			}
@@ -67,7 +71,7 @@ public class BookServiceImpl implements BookService {
 			request.setPhotoURI(null);
 		}
 
-		final var genre = genreRepository.findByString(request.getGenre())
+		final var genre = IGenreRepository.findByString(request.getGenre())
 				.orElseThrow(() -> new NotFoundException("Genre not found"));
 
 		Book newBook = new Book(isbn, request.getTitle(), request.getDescription(), genre, authors, photoURI);
@@ -81,10 +85,10 @@ public class BookServiceImpl implements BookService {
 
         var book = findByIsbn(request.getIsbn());
         if(request.getAuthors()!= null) {
-            List<Long> authorNumbers = request.getAuthors();
+            List<String> authorNumbers = request.getAuthors();
             List<Author> authors = new ArrayList<>();
-            for (Long authorNumber : authorNumbers) {
-                Optional<Author> temp = authorRepository.findByAuthorNumber(authorNumber);
+            for (String authorNumber : authorNumbers) {
+                Optional<Author> temp = AuthorRepository.findByAuthorNumber(authorNumber);
                 if (temp.isEmpty()) {
                     continue;
                 }
@@ -103,7 +107,7 @@ public class BookServiceImpl implements BookService {
 		}
 
         if (request.getGenre() != null) {
-            Optional<Genre> genre = genreRepository.findByString(request.getGenre());
+            Optional<Genre> genre = IGenreRepository.findByString(request.getGenre());
             if (genre.isEmpty()) {
                 throw new NotFoundException("Genre not found");
             }

@@ -1,4 +1,4 @@
-package pt.psoft.g1.psoftg1.lendingmanagement.services;
+package pt.psoft.g1.psoftg1.lendingmanagement.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Size;

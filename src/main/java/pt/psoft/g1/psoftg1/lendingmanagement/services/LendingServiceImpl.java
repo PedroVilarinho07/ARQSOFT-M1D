@@ -7,6 +7,10 @@ import org.springframework.stereotype.Service;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import pt.psoft.g1.psoftg1.exceptions.LendingForbiddenException;
 import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
+import pt.psoft.g1.psoftg1.lendingmanagement.dto.request.CreateLendingRequest;
+import pt.psoft.g1.psoftg1.lendingmanagement.dto.request.SearchLendingQuery;
+import pt.psoft.g1.psoftg1.lendingmanagement.dto.request.SetLendingReturnedRequest;
+import pt.psoft.g1.psoftg1.lendingmanagement.factories.LendingFactory;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Fine;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 import pt.psoft.g1.psoftg1.lendingmanagement.repositories.FineRepository;
@@ -28,6 +32,7 @@ public class LendingServiceImpl implements LendingService{
     private final FineRepository fineRepository;
     private final BookRepository bookRepository;
     private final ReaderRepository readerRepository;
+    private final LendingFactory lendingFactory;
 
     @Value("${lendingDurationInDays}")
     private int lendingDurationInDays;
@@ -77,7 +82,7 @@ public class LendingServiceImpl implements LendingService{
         final var r = readerRepository.findByReaderNumber(resource.getReaderNumber())
                 .orElseThrow(() -> new NotFoundException("Reader not found"));
         int seq = lendingRepository.getCountFromCurrentYear()+1;
-        final Lending l = new Lending(b,r,seq, lendingDurationInDays, fineValuePerDayInCents );
+        final Lending l = lendingFactory.newLending(b.getIsbn(),r.getReaderNumber(), lendingDurationInDays, fineValuePerDayInCents );
 
         return lendingRepository.save(l);
     }

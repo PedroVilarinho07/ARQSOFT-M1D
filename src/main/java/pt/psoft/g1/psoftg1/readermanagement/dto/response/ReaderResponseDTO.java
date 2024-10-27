@@ -1,14 +1,13 @@
-package pt.psoft.g1.psoftg1.readermanagement.api;
+package pt.psoft.g1.psoftg1.readermanagement.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import lombok.Setter;
 
 import java.util.List;
 
 @Data
 @Schema(description = "A Reader")
-public class ReaderView {
+public class ReaderResponseDTO {
     private String readerNumber;
     private String email;
     private String fullName;
