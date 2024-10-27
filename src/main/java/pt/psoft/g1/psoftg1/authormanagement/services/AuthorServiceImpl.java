@@ -5,9 +5,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import pt.psoft.g1.psoftg1.authormanagement.api.AuthorLendingView;
+import pt.psoft.g1.psoftg1.authormanagement.dto.response.AuthorLendingResponseDTO;
+import pt.psoft.g1.psoftg1.authormanagement.dto.request.CreateAuthorRequest;
+import pt.psoft.g1.psoftg1.authormanagement.dto.request.UpdateAuthorRequest;
+import pt.psoft.g1.psoftg1.authormanagement.factories.AuthorFactory;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
-import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
+import pt.psoft.g1.psoftg1.authormanagement.repositories.IAuthorRepository;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
@@ -19,24 +22,25 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class AuthorServiceImpl implements AuthorService {
-    private final AuthorRepository authorRepository;
+    private final IAuthorRepository IAuthorRepository;
     private final BookRepository bookRepository;
     private final AuthorMapper mapper;
     private final PhotoRepository photoRepository;
+    private final AuthorFactory authorFactory;
 
     @Override
     public Iterable<Author> findAll() {
-        return authorRepository.findAll();
+        return IAuthorRepository.findAll();
     }
 
     @Override
-    public Optional<Author> findByAuthorNumber(final Long authorNumber) {
-        return authorRepository.findByAuthorNumber(authorNumber);
+    public Optional<Author> findByAuthorNumber(final String authorNumber) {
+        return IAuthorRepository.findByAuthorNumber(authorNumber);
     }
 
     @Override
     public List<Author> findByName(String name) {
-        return authorRepository.searchByNameNameStartsWith(name);
+        return IAuthorRepository.searchByNameNameStartsWith(name);
     }
 
     @Override
@@ -60,11 +64,11 @@ public class AuthorServiceImpl implements AuthorService {
             resource.setPhotoURI(null);
         }
         final Author author = mapper.create(resource);
-        return authorRepository.save(author);
+        return IAuthorRepository.save(author);
     }
 
     @Override
-    public Author partialUpdate(final Long authorNumber, final UpdateAuthorRequest request, final long desiredVersion) {
+    public Author partialUpdate(final String authorNumber, final UpdateAuthorRequest request) {
         // first let's check if the object exists so we don't create a new object with
         // save
         final var author = findByAuthorNumber(authorNumber)
@@ -89,36 +93,36 @@ public class AuthorServiceImpl implements AuthorService {
         }
         // since we got the object from the database we can check the version in memory
         // and apply the patch
-        author.applyPatch(desiredVersion, request);
+        author.applyPatch(request);
 
         // in the meantime some other user might have changed this object on the
         // database, so concurrency control will still be applied when we try to save
         // this updated object
-        return authorRepository.save(author);
+        return IAuthorRepository.save(author);
     }
     @Override
-    public List<AuthorLendingView> findTopAuthorByLendings() {
+    public List<AuthorLendingResponseDTO> findTopAuthorByLendings() {
         Pageable pageableRules = PageRequest.of(0,5);
-        return authorRepository.findTopAuthorByLendings(pageableRules).getContent();
+        return IAuthorRepository.findTopAuthorByLendings(pageableRules).getContent();
     }
 
     @Override
-    public List<Book> findBooksByAuthorNumber(Long authorNumber){
+    public List<Book> findBooksByAuthorNumber(String authorNumber){
         return bookRepository.findBooksByAuthorNumber(authorNumber);
     }
 
     @Override
-    public List<Author> findCoAuthorsByAuthorNumber(Long authorNumber) {
-        return authorRepository.findCoAuthorsByAuthorNumber(authorNumber);
+    public List<Author> findCoAuthorsByAuthorNumber(String authorNumber) {
+        return IAuthorRepository.findCoAuthorsByAuthorNumber(authorNumber);
     }
-    @Override
-    public Optional<Author> removeAuthorPhoto(Long authorNumber, long desiredVersion) {
-        Author author = authorRepository.findByAuthorNumber(authorNumber)
+
+    public Optional<Author> removeAuthorPhoto(String authorNumber) {
+        Author author = IAuthorRepository.findByAuthorNumber(authorNumber)
                 .orElseThrow(() -> new NotFoundException("Cannot find reader"));
 
         String photoFile = author.getPhoto().getPhotoFile();
-        author.removePhoto(desiredVersion);
-        Optional<Author> updatedAuthor = Optional.of(authorRepository.save(author));
+        author.removePhoto();
+        Optional<Author> updatedAuthor = Optional.of(IAuthorRepository.save(author));
         photoRepository.deleteByPhotoFile(photoFile);
         return updatedAuthor;
     }
