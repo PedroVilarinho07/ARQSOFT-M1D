@@ -15,11 +15,10 @@ public class Isbn implements Serializable {
     String isbn;
 
     public Isbn(String isbn) {
-        if (isbn == null || isbn.isBlank()) {
-            throw new IllegalArgumentException("Isbn cannot be null or blank");
-        }
-        if (isbn.matches("0+")) {
-            throw new IllegalArgumentException("ISBN cannot be all zeros.");
+        if (isValidIsbn(isbn)) {
+            this.isbn = isbn;
+        } else {
+            throw new IllegalArgumentException("Invalid ISBN-13 format or check digit.");
         }
     }
 
