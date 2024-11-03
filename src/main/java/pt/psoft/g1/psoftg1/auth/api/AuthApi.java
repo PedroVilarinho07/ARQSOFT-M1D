@@ -24,6 +24,7 @@ import static java.lang.String.format;
 import static java.util.stream.Collectors.joining;
 
 import java.time.Instant;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -33,13 +34,11 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import pt.psoft.g1.psoftg1.usermanagement.api.UserView;
 import pt.psoft.g1.psoftg1.usermanagement.api.UserViewMapper;
@@ -97,6 +96,32 @@ public class AuthApi {
 		}
 	}
 
+	// Novo endpoint para login via Google OAuth
+	/*
+	@GetMapping("oauth2/google")
+	public ResponseEntity<UserView> googleLogin(OAuth2AuthenticationToken authentication) {
+		final Instant now = Instant.now();
+		final long expiry = 36000L;
+
+		// Pegando os dados do Google OAuth, como email e nome
+		String email = authentication.getPrincipal().getAttributes().get("email").toString();
+		String name = authentication.getPrincipal().getAttributes().get("name").toString();
+
+		// Cria ou encontra o usuário no banco de dados (pode ser ajustado)
+		User user = userService.findOrCreateUserByEmail(email, name);
+
+		final String scope = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority)
+				.collect(joining(" "));
+
+		final JwtClaimsSet claims = JwtClaimsSet.builder().issuer("example.io").issuedAt(now)
+				.expiresAt(now.plusSeconds(expiry)).subject(format("%s,%s", user.getId(), user.getUsername()))
+				.claim("roles", scope).build();
+
+		final String token = this.jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+
+		return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, token).body(userViewMapper.toUserView(user));
+	}
+*/
 	/**
 	 * signup to the service
 	 *
@@ -109,4 +134,31 @@ public class AuthApi {
 		return userViewMapper.toUserView(user);
 	}
 
+	@GetMapping("/login/oauth2/google")
+	public ResponseEntity<String> googleLogin(OAuth2AuthenticationToken authentication) {
+		String email = authentication.getPrincipal().getAttributes().get("email").toString();
+		String name = authentication.getPrincipal().getAttributes().get("name").toString();
+
+		User user = userService.findOrCreateUserByEmail(email, name);
+
+		Instant now = Instant.now();
+		String scope = authentication.getAuthorities().stream()
+				.map(GrantedAuthority::getAuthority)
+				.collect(Collectors.joining(" "));
+
+		JwtClaimsSet claims = JwtClaimsSet.builder()
+				.issuer("example.io")
+				.issuedAt(now)
+				.expiresAt(now.plusSeconds(3600))
+				.subject(String.format("%s,%s", user.getId(), user.getUsername()))
+				.claim("roles", scope)
+				.build();
+
+		String token = this.jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+
+		// Exibe o token diretamente na página de retorno para fins de teste
+		return ResponseEntity.ok()
+				.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+				.body(token);
+	}
 }
