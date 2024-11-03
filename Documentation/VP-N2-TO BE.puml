@@ -1,0 +1,10 @@
+@startuml
+participant System
+
+System -> LMS : Request Book Recommendations
+LMS -> BookService : Get Recommendations
+BookService -> BookRecommendationY : Fetch Recommendations based on Popular Genres
+BookRecommendationY -> BookService : Return Recommended Books
+BookService -> LMS : Return Recommended Books
+LMS -> System : Display Recommended Books
+@enduml

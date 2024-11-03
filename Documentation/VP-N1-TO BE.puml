@@ -1,0 +1,8 @@
+@startuml
+actor System
+
+System -> LMS : Request Recommendations
+LMS -> BookRepository : Fetch Books
+BookRepository --> LMS : Books
+LMS --> System : Display Books
+@enduml
