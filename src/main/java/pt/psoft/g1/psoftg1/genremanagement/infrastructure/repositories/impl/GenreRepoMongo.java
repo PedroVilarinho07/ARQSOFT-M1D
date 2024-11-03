@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import pt.psoft.g1.psoftg1.bookmanagement.dto.request.GenreBookCountDTO;
+import pt.psoft.g1.psoftg1.bootstrapping.Entities;
 import pt.psoft.g1.psoftg1.genremanagement.dto.GenreLendingsDTO;
 import pt.psoft.g1.psoftg1.genremanagement.dto.GenreLendingsPerMonthDTO;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
@@ -112,7 +113,7 @@ public class GenreRepoMongo implements GenreRepository {
 
     @Override
     public List<Genre> getGenreWithMostLendings(int numberOfGenres) {
-        return null;
+        return new ArrayList<>(Entities.getGenres().subList(0, numberOfGenres));
     }
 
     @Override
