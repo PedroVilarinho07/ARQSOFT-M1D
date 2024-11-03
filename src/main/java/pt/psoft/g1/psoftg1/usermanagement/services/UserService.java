@@ -156,4 +156,17 @@ public class UserService implements UserDetailsService {
 
 		return loggedUser.get();
 	}
+
+	@Transactional
+	public User findOrCreateUserByEmail(String email, String name) {
+		Optional<User> existingUser = userRepo.findByUsername(email);
+
+		if (existingUser.isPresent()) {
+			return existingUser.get();
+		}
+
+		User newUser = Reader.newReader(email, "", name);
+		newUser.setEnabled(true);
+		return userRepo.save(newUser);
+	}
 }

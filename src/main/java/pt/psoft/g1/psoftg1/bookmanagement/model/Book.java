@@ -30,26 +30,40 @@ public class Book extends EntityWithPhoto {
     @Embedded
     Description description;
 
-    private void setTitle(String title) {this.title = new Title(title);}
+    private void setTitle(String title) {
+        this.title = new Title(title);  // Cria um novo objeto Title
+    }
 
     private void setIsbn(String isbn) {
         this.isbn = new Isbn(isbn);
     }
 
-    private void setDescription(String description) {this.description = new Description(description); }
+    private void setDescription(String description) {
+        this.description = new Description(description);  // Cria um novo objeto Description
+    }
 
-    private void setGenre(Genre genre) {this.genre = genre; }
+    private void setGenre(Genre genre) {
+        this.genre = genre;
+    }
 
-    private void setAuthors(List<Author> authors) {this.authors = authors; }
+    private void setAuthors(List<Author> authors) {
+        this.authors = authors;
+    }
 
-    public String getDescription(){ return this.description.toString(); }
+    public String getDescription() {
+        return this.description != null ? this.description.toString() : null;
+    }
+
+    public String getTitle() {
+        return this.title != null ? this.title.toString() : null;
+    }
 
     public Book(String isbn, String title, String description, Genre genre, List<Author> authors, String photoURI) {
         setTitle(title);
         setIsbn(isbn);
         if(description != null)
             setDescription(description);
-        if(genre==null)
+        if(genre == null)
             throw new IllegalArgumentException("Genre cannot be null");
         setGenre(genre);
         if(authors == null)
@@ -62,42 +76,31 @@ public class Book extends EntityWithPhoto {
     }
 
     protected Book() {
-        // got ORM only
+        // For ORM only
     }
-
     public void removePhoto(long desiredVersion) {
-        setPhotoInternal(null);
+        setPhotoInternal(null);  // Define a foto como nula, removendo a referência.
     }
 
     public void applyPatch(final Long desiredVersion, UpdateBookRequest request) {
-
-        String title = request.getTitle();
-        String description = request.getDescription();
-        Genre genre = request.getGenreObj();
-        List<Author> authors = request.getAuthorObjList();
-        String photoURI = request.getPhotoURI();
-        if(title != null) {
-            setTitle(title);
+        if (request.getTitle() != null) {
+            setTitle(request.getTitle());  // Atualiza `title`
         }
-
-        if(description != null) {
-            setDescription(description);
+        if (request.getDescription() != null) {
+            setDescription(request.getDescription());  // Atualiza `description`
         }
-
-        if(genre != null) {
-            setGenre(genre);
+        if (request.getGenreObj() != null) {
+            setGenre(request.getGenreObj());  // Atualiza `genre`
         }
-
-        if(authors != null) {
-            setAuthors(authors);
+        if (request.getAuthorObjList() != null) {
+            setAuthors(request.getAuthorObjList());  // Atualiza `authors`
         }
-
-        if(photoURI != null)
-            setPhotoInternal(photoURI);
-
+        if (request.getPhotoURI() != null) {
+            setPhotoInternal(request.getPhotoURI());  // Atualiza `photoURI`
+        }
     }
 
-    public String getIsbn(){
+    public String getIsbn() {
         return this.isbn.toString();
     }
 }

@@ -22,31 +22,31 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class GenreService implements IGenreService {
 
-    private final GenreRepository IGenreRepository;
+    private final GenreRepository GenreRepository;
 
     public Optional<Genre> findByString(String name) {
-        return IGenreRepository.findByString(name);
+        return GenreRepository.findByString(name);
     }
 
     @Override
     public Iterable<Genre> findAll() {
-        return IGenreRepository.findAll();
+        return GenreRepository.findAll();
     }
 
     @Override
     public List<GenreBookCountDTO> findTopGenreByBooks(){
         Pageable pageableRules = PageRequest.of(0,5);
-        return this.IGenreRepository.findTop5GenreByBookCount(pageableRules).getContent();
+        return this.GenreRepository.findTop5GenreByBookCount(pageableRules).getContent();
     }
 
     @Override
     public Genre save(Genre genre) {
-        return this.IGenreRepository.save(genre);
+        return this.GenreRepository.save(genre);
     }
 
     @Override
     public List<GenreLendingsPerMonthDTO> getLendingsPerMonthLastYearByGenre() {
-        return IGenreRepository.getLendingsPerMonthLastYearByGenre();
+        return GenreRepository.getLendingsPerMonthLastYearByGenre();
     }
 
     @Override
@@ -56,7 +56,7 @@ public class GenreService implements IGenreService {
 
         final var month = LocalDate.of(query.getYear(), query.getMonth(), 1);
 
-        return IGenreRepository.getAverageLendingsInMonth(month, page);
+        return GenreRepository.getAverageLendingsInMonth(month, page);
     }
 
     @Override
@@ -74,7 +74,7 @@ public class GenreService implements IGenreService {
         if(startDate.isAfter(endDate))
             throw new IllegalArgumentException("Start date cannot be after end date");
 
-        final var list = IGenreRepository.getLendingsAverageDurationPerMonth(startDate, endDate);
+        final var list = GenreRepository.getLendingsAverageDurationPerMonth(startDate, endDate);
 
         if (list.isEmpty())
             throw new NotFoundException("No objects match the provided criteria");

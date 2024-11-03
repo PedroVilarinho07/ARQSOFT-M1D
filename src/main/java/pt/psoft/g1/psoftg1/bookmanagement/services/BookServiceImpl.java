@@ -16,12 +16,14 @@ import pt.psoft.g1.psoftg1.bookmanagement.model.*;
 import pt.psoft.g1.psoftg1.bookmanagement.model.domainService.BookRecommendation;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import lombok.RequiredArgsConstructor;
+import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
 import pt.psoft.g1.psoftg1.genremanagement.dto.request.RecommendationBooksRequestDTO;
 import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
 import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
 import pt.psoft.g1.psoftg1.exceptions.ConflictException;
 import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
+import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
 import pt.psoft.g1.psoftg1.shared.repositories.PhotoRepository;
 import pt.psoft.g1.psoftg1.shared.services.Page;
@@ -37,7 +39,7 @@ import java.util.Optional;
 public class BookServiceImpl implements BookService {
 
 	private final BookRepository bookRepository;
-	private final GenreRepository IGenreRepository;
+	private final GenreRepository GenreRepository;
 	private final AuthorRepository AuthorRepository;
 	private final PhotoRepository photoRepository;
 	private final ReaderRepository readerRepository;
@@ -73,7 +75,7 @@ public class BookServiceImpl implements BookService {
 			request.setPhotoURI(null);
 		}
 
-		final var genre = IGenreRepository.findByString(request.getGenre())
+		final var genre = GenreRepository.findByString(request.getGenre())
 				.orElseThrow(() -> new NotFoundException("Genre not found"));
 
 		Book newBook = new Book(isbn, request.getTitle(), request.getDescription(), genre, authors, photoURI);
@@ -109,7 +111,7 @@ public class BookServiceImpl implements BookService {
 		}
 
         if (request.getGenre() != null) {
-            Optional<Genre> genre = IGenreRepository.findByString(request.getGenre());
+            Optional<Genre> genre = GenreRepository.findByString(request.getGenre());
             if (genre.isEmpty()) {
                 throw new NotFoundException("Genre not found");
             }

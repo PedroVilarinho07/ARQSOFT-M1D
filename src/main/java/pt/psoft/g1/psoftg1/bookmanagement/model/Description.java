@@ -21,14 +21,15 @@ public class Description {
     protected Description() {}
 
     public void setDescription(@Nullable String description) {
-        if(description == null || description.isBlank()) {
+        if (description == null || description.isBlank()) {
             this.description = null;
-        }else if(description.length() > DESC_MAX_LENGTH) {
+        } else if (description.length() > DESC_MAX_LENGTH) {
             throw new IllegalArgumentException("Description has a maximum of 4096 characters");
-        }else{
-            this.description = StringUtilsCustom.sanitizeHtml(description);
+        } else {
+            this.description = description.trim();
         }
     }
+
 
     public String toString() {
         return this.description;

@@ -47,7 +47,9 @@ public class Author extends EntityWithPhoto {
         setAuthorNumber(authorNumber);
         setName(name);
         setBio(bio);
-        setPhoto(photoURI);
+        if (photoURI != null){
+            setPhoto(photoURI);
+        }
     }
 
     public void applyPatch(final UpdateAuthorRequest request) {
