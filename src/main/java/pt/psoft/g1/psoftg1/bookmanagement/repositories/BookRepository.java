@@ -19,6 +19,7 @@ public interface BookRepository {
 
 
     List<Book> findByGenre(@Param("genre") String genre);
+    List<Book> findXBooksByGenre(@Param("genre") String genre, @Param("numberOfBooks") Integer numberOfBooks);
     List<Book> findByTitle(@Param("title") String title);
     List<Book> findByAuthorName(@Param("authorName") String authorName);
     Optional<Book> findByIsbn(@Param("isbn") String isbn);

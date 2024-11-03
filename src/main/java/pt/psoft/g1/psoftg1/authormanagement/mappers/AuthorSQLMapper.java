@@ -4,6 +4,8 @@ import pt.psoft.g1.psoftg1.authormanagement.dataModel.sql.AuthorDataModel;
 import pt.psoft.g1.psoftg1.authormanagement.factories.AuthorFactory;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class AuthorSQLMapper {
@@ -17,6 +19,15 @@ public class AuthorSQLMapper {
         );
         author.setAuthorNumber(dataModel.getAuthorNumber());
         return author;
+    }
+
+    public static List<Author> convertListToDomainAuthor(AuthorFactory authorFactory, List<AuthorDataModel> authors) {
+        List<Author> newAuthors = new ArrayList<>();
+        for (AuthorDataModel authorDataModel : authors) {
+            Author author = convertToDomainAuthor(authorFactory, authorDataModel);  // Assuming newAuthor method accepts AuthorDataModel and returns Author
+            newAuthors.add(author);
+        }
+        return newAuthors;
     }
 
 }

@@ -8,7 +8,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
-import pt.psoft.g1.psoftg1.genremanagement.repositories.IGenreRepository;
+import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
 import pt.psoft.g1.psoftg1.usermanagement.model.Librarian;
@@ -31,7 +31,7 @@ public class UserBootstrapper implements CommandLineRunner {
 
     private final UserRepository userRepository;
     private final ReaderRepository readerRepository;
-    private final IGenreRepository IGenreRepository;
+    private final GenreRepository IGenreRepository;
     private final JdbcTemplate jdbcTemplate;
     private List<String> queriesToExecute = new ArrayList<>();
 

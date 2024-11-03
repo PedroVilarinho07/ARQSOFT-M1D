@@ -108,6 +108,7 @@ interface UserRepoCustom {
  *
  */
 @RequiredArgsConstructor
+@Repository
 class UserRepoCustomImpl implements UserRepoCustom {
 
 	// get the underlying JPA Entity Manager via spring thru constructor dependency

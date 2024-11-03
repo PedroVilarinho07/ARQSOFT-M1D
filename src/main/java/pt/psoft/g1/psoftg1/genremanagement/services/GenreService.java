@@ -10,7 +10,7 @@ import pt.psoft.g1.psoftg1.genremanagement.dto.GenreLendingsDTO;
 import pt.psoft.g1.psoftg1.genremanagement.dto.GenreLendingsPerMonthDTO;
 import pt.psoft.g1.psoftg1.genremanagement.dto.request.GetAverageLendingsQuery;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
-import pt.psoft.g1.psoftg1.genremanagement.repositories.IGenreRepository;
+import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
 import pt.psoft.g1.psoftg1.shared.services.Page;
 
 import java.time.LocalDate;
@@ -22,7 +22,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class GenreService implements IGenreService {
 
-    private final IGenreRepository IGenreRepository;
+    private final GenreRepository IGenreRepository;
 
     public Optional<Genre> findByString(String name) {
         return IGenreRepository.findByString(name);

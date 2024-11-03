@@ -1,5 +1,6 @@
 package pt.psoft.g1.psoftg1.authormanagement.infrastructure.repositories.impl;
 
+import jakarta.persistence.*;
 import jdk.jshell.spi.ExecutionControl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,7 +8,10 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import pt.psoft.g1.psoftg1.authormanagement.dto.response.AuthorLendingResponseDTO;
 import pt.psoft.g1.psoftg1.authormanagement.factories.AuthorFactory;
 import pt.psoft.g1.psoftg1.authormanagement.mappers.AuthorSQLMapper;
@@ -15,9 +19,6 @@ import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
 import pt.psoft.g1.psoftg1.authormanagement.dataModel.sql.AuthorDataModel;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.TypedQuery;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -68,7 +69,9 @@ public class AuthorSQLRepo implements AuthorRepository {
     }
 
     @Override
+    @Transactional
     public Author save(Author author) {
+        entityManager.setFlushMode(FlushModeType.AUTO);
         String photo;
         try {
             photo = author.getPhoto().getPhotoFile();
@@ -80,8 +83,14 @@ public class AuthorSQLRepo implements AuthorRepository {
                 author.getBio(),
                 photo
         );
+        
         entityManager.persist(dataModel);
+        entityManager.flush();
+        System.out.println("Is transaction active? " + TransactionSynchronizationManager.isActualTransactionActive());
+        System.out.println("Is transaction marked for rollback? " + TransactionSynchronizationManager.isCurrentTransactionReadOnly());
+
         return author;
+
     }
 
     @Override

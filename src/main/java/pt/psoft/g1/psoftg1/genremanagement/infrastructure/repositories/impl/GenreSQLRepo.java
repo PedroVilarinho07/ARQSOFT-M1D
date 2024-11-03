@@ -6,18 +6,20 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import pt.psoft.g1.psoftg1.bookmanagement.dto.request.GenreBookCountDTO;
+import pt.psoft.g1.psoftg1.bootstrapping.Entities;
 import pt.psoft.g1.psoftg1.genremanagement.dto.GenreLendingsDTO;
 import pt.psoft.g1.psoftg1.genremanagement.dto.GenreLendingsPerMonthDTO;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
-import pt.psoft.g1.psoftg1.genremanagement.repositories.IGenreRepository;
+import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Profile("sql")
 @Repository
-public class GenreSQLRepo implements IGenreRepository {
+public class GenreSQLRepo implements GenreRepository {
 
 
     @Override
@@ -53,6 +55,11 @@ public class GenreSQLRepo implements IGenreRepository {
     @Override
     public List<GenreLendingsPerMonthDTO> getLendingsAverageDurationPerMonth(LocalDate startDate, LocalDate endDate) {
         return List.of();
+    }
+
+    @Override
+    public List<Genre> getGenreWithMostLendings(int numberOfGenres) {
+        return new ArrayList<>(Entities.getGenres().subList(0, numberOfGenres));
     }
 
     @Override
