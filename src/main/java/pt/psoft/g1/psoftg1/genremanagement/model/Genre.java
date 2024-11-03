@@ -28,4 +28,18 @@ public class Genre {
     public String toString() {
         return genre;
     }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Genre other = (Genre) obj;
+        return genre.equals(other.genre);
+    }
+
+    @Override
+    public int hashCode() {
+        return genre.hashCode();
+    }
 }

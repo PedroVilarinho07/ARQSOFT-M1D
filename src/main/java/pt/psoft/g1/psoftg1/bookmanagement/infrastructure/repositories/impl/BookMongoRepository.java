@@ -9,6 +9,7 @@ import pt.psoft.g1.psoftg1.bookmanagement.dto.request.BookCountDTO;
 import pt.psoft.g1.psoftg1.bookmanagement.dto.request.SearchBooksQuery;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
+import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 
@@ -131,4 +132,38 @@ public class BookMongoRepository implements BookRepository {
     public List<Book> searchBooks(pt.psoft.g1.psoftg1.shared.services.Page page, SearchBooksQuery query) {
         return staticBooks;
     }
+
+    @Override
+    public List<Book> recommendBooksBasedOnAge(int age, int numberOfBooks, String readerNumber) {
+        String genre;
+        if (age < 10) {
+            genre = "children";
+        } else if (age >= 10 && age < 18) {
+            genre = "juvenile";
+        } else {
+            genre = getMostLentGenreByReader(readerNumber); // método auxiliar para gênero mais emprestado
+            if (genre == null) {
+                throw new NotFoundException("No genre found for the reader's lending history.");
+            }
+        }
+
+        // Retorna os livros recomendados com base no gênero identificado
+        return findXBooksByGenre(genre, numberOfBooks);
+    }
+
+    // Método auxiliar para identificar o gênero mais emprestado de um leitor específico
+    private String getMostLentGenreByReader(String readerNumber) {
+        // Simula a contagem de empréstimos por gênero usando streams e coletores
+        return staticBooks.stream()
+                .filter(book -> book.getGenre() != null && book.getAuthors() != null)
+                .flatMap(book -> book.getAuthors().stream()
+                        .filter(author -> author.getAuthorNumber().equals(readerNumber))
+                        .map(author -> book.getGenre().toString()))
+                .collect(Collectors.groupingBy(g -> g, Collectors.counting()))
+                .entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse(null);
+    }
+
 }

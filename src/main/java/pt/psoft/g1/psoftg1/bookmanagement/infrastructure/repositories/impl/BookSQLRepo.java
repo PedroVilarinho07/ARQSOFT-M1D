@@ -17,6 +17,7 @@ import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import pt.psoft.g1.psoftg1.bookmanagement.dataModel.sql.BookDataModel;
 import pt.psoft.g1.psoftg1.bootstrapping.Entities;
+import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -96,6 +97,52 @@ public class BookSQLRepo implements BookRepository {
     public void delete(Book book) {
 
     }
+    @Override
+    public List<Book> recommendBooksBasedOnAge(int age, int numberOfBooks, String readerNumber) {
+        String genre;
+        if (age < 10) {
+            genre = "children";
+        } else if (age >= 10 && age < 18) {
+            genre = "juvenile";
+        } else {
+            genre = getMostLentGenreByReader(readerNumber); // método auxiliar que vai buscar o genero mais emprestado
+            if (genre == null) {
+                throw new NotFoundException("No genre found for the reader's lending history.");
+            }
+        }
+
+        // Busca os livros recomendados com base no gênero identificado
+        return findXBooksByGenre(genre, numberOfBooks);
+    }
+
+    private String getMostLentGenreByReader(String readerNumber) {
+        // Primeira consulta: obter os ISBNs mais emprestados pelo leitor
+        TypedQuery<String> query = entityManager.createQuery(
+                "SELECT l.isbn FROM LendingDataModel l " +
+                        "WHERE l.readerNumber = :readerNumber " +
+                        "GROUP BY l.isbn " +
+                        "ORDER BY COUNT(l) DESC", String.class
+        );
+        query.setParameter("readerNumber", readerNumber);
+        query.setMaxResults(1);
+
+        // Pega o ISBN mais emprestado, se houver
+        String mostLentIsbn = query.getResultList().stream().findFirst().orElse(null);
+
+        if (mostLentIsbn == null) {
+            return null; // Nenhum empréstimo encontrado
+        }
+
+        // Segunda consulta: busca o gênero do livro com o ISBN mais emprestado
+        TypedQuery<String> genreQuery = entityManager.createQuery(
+                "SELECT b.genre FROM BookDataModel b WHERE b.isbn = :isbn", String.class
+        );
+        genreQuery.setParameter("isbn", mostLentIsbn);
+
+        return genreQuery.getResultList().stream().findFirst().orElse(null);
+    }
+
+
 /*
     @Override
     public List<Book> findByTitle(String title) {

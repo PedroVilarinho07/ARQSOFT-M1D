@@ -30,4 +30,7 @@ public interface BookRepository {
 
     Book save(Book book);
     void delete(Book book);
+
+    List<Book> recommendBooksBasedOnAge(int age, int numberOfBooks, String readerNumber);
+
 }
