@@ -6,7 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
-import pt.psoft.g1.psoftg1.genremanagement.repositories.IGenreRepository;
+import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
 import pt.psoft.g1.psoftg1.exceptions.ConflictException;
 import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
 import pt.psoft.g1.psoftg1.readermanagement.dto.request.CreateReaderRequest;
@@ -32,7 +32,7 @@ public class ReaderServiceImpl implements ReaderService {
     private final ReaderRepository readerRepo;
     private final UserRepository userRepo;
     private final ReaderMapper readerMapper;
-    private final IGenreRepository genreRepo;
+    private final GenreRepository genreRepo;
     private final ForbiddenNameRepository forbiddenNameRepository;
     private final PhotoRepository photoRepository;
 

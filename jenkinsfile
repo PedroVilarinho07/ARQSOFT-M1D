@@ -1,0 +1,51 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Maven Clean') {
+            steps {
+                script {
+                    sh 'mvn clean'
+                }
+            }
+        }
+
+        stage('Unit Tests') {
+            steps {
+                script {
+                    sh 'mvn test'
+                }
+            }
+        }
+
+        stage('Mutation Tests') {
+            steps {
+                script {
+                    sh 'mvn org.pitest:pitest-maven:mutationCoverage'
+                }
+            }
+        }
+
+        stage('Integration Tests') {
+            steps {
+                script {
+                    sh 'mvn failsafe:integration-test failsafe:verify'
+                }
+            }
+        }
+
+        stage('Install') {
+            steps {
+                script {
+                    sh 'mvn install -DskipTests'
+                }
+            }
+        }
+    }
+}

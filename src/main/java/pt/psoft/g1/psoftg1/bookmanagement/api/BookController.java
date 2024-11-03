@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,14 +23,13 @@ import pt.psoft.g1.psoftg1.bookmanagement.dto.request.SearchBooksQuery;
 import pt.psoft.g1.psoftg1.bookmanagement.dto.request.UpdateBookRequest;
 import pt.psoft.g1.psoftg1.exceptions.ConflictException;
 import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
+import pt.psoft.g1.psoftg1.genremanagement.dto.request.RecommendationBooksRequestDTO;
 import pt.psoft.g1.psoftg1.lendingmanagement.services.LendingService;
-import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 import pt.psoft.g1.psoftg1.readermanagement.services.ReaderService;
 import pt.psoft.g1.psoftg1.shared.api.ListResponse;
 import pt.psoft.g1.psoftg1.shared.services.ConcurrencyService;
 import pt.psoft.g1.psoftg1.shared.services.FileStorageService;
 import pt.psoft.g1.psoftg1.shared.services.SearchRequest;
-import pt.psoft.g1.psoftg1.usermanagement.model.User;
 import pt.psoft.g1.psoftg1.usermanagement.services.UserService;
 
 import java.util.Comparator;
@@ -214,12 +212,8 @@ public class BookController {
 
     @Operation(summary = "Gets some books suggestions based on the reader's interests")
     @GetMapping("suggestions")
-    public ListResponse<BookResponseDTO> getBooksSuggestions(Authentication authentication) {
-        User loggedUser = userService.getAuthenticatedUser(authentication);
-        ReaderDetails readerDetails = readerService.findByUsername(loggedUser.getUsername())
-                .orElseThrow(() -> new NotFoundException(ReaderDetails.class, loggedUser.getUsername()));
-
-        return new ListResponse<>(bookViewMapper.toBookView(bookService.getBooksSuggestionsForReader(readerDetails.getReaderNumber())));
+    public ListResponse<BookResponseDTO> getBooksSuggestions(RecommendationBooksRequestDTO resource) {
+        return new ListResponse<>(bookViewMapper.toBookView(bookService.getBooksSuggestionsForReader(resource)));
     }
 
     @Operation(summary = "Get average lendings duration")

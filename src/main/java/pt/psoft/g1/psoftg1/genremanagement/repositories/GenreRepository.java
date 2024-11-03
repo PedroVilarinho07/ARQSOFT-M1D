@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-public interface IGenreRepository {
+public interface GenreRepository {
 
     Iterable<Genre> findAll();
     Optional<Genre> findByString(String genreName);
@@ -20,5 +20,6 @@ public interface IGenreRepository {
     List<GenreLendingsDTO> getAverageLendingsInMonth(LocalDate month, pt.psoft.g1.psoftg1.shared.services.Page page);
     List<GenreLendingsPerMonthDTO> getLendingsPerMonthLastYearByGenre();
     List<GenreLendingsPerMonthDTO> getLendingsAverageDurationPerMonth(LocalDate startDate, LocalDate endDate);
+    List<Genre> getGenreWithMostLendings(int numberOfGenres);
     void delete(Genre genre);
 }

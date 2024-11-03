@@ -11,8 +11,6 @@ public class Bio {
 
     private final int BIO_MAX_LENGTH = 4096;
 
-    @NotNull
-    @Size(min = 1, max = BIO_MAX_LENGTH)
     private String bio;
 
     public Bio(String bio) {
@@ -28,7 +26,7 @@ public class Bio {
         if(bio.isBlank())
             throw new IllegalArgumentException("Bio cannot be blank");
         if(bio.length() > BIO_MAX_LENGTH)
-            throw new IllegalArgumentException("Bio has a maximum of 4096 characters");
+            throw new IllegalArgumentException("Bio has a maximum of " + BIO_MAX_LENGTH + " characters");
         this.bio = StringUtilsCustom.sanitizeHtml(bio);
     }
 

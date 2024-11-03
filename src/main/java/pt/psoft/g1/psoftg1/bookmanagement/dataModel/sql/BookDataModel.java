@@ -31,8 +31,8 @@ public class BookDataModel {
     @Size(max = 128)
     private String title;
 
-    @Column(name = "GENRE_ID", nullable = false)
-    private Long genreId;
+    @Column(name = "GENRE_Id")
+    private String genre;
 
     @Column(name = "DESCRIPTION", length = 4096)
     private String description;
@@ -50,11 +50,11 @@ public class BookDataModel {
 
     public BookDataModel() {}
 
-    public BookDataModel(String isbn, String title, String description, Long genreId, List<AuthorDataModel> authors, String photoURI) {
+    public BookDataModel(String isbn, String title, String description, String genre, List<AuthorDataModel> authors, String photoURI) {
         this.isbn = isbn;
         this.title = title;
         this.description = description;
-        this.genreId = genreId;
+        this.genre = genre;
         this.authors = authors;
         this.photoURI = photoURI;
     }

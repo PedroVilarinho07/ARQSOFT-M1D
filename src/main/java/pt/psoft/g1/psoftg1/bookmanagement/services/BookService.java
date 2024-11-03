@@ -6,6 +6,7 @@ import pt.psoft.g1.psoftg1.bookmanagement.dto.request.CreateBookRequest;
 import pt.psoft.g1.psoftg1.bookmanagement.dto.request.SearchBooksQuery;
 import pt.psoft.g1.psoftg1.bookmanagement.dto.request.UpdateBookRequest;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
+import pt.psoft.g1.psoftg1.genremanagement.dto.request.RecommendationBooksRequestDTO;
 import pt.psoft.g1.psoftg1.shared.services.Page;
 
 import java.util.List;
@@ -23,6 +24,6 @@ public interface BookService {
     List<Book> findByAuthorName(String authorName);
     List<BookCountDTO> findTop5BooksLent();
     Book removeBookPhoto(String isbn, long desiredVersion);
-    List<Book> getBooksSuggestionsForReader(String readerNumber);
+    List<Book> getBooksSuggestionsForReader(RecommendationBooksRequestDTO request);
     List<Book> searchBooks(Page page, SearchBooksQuery query);
 }

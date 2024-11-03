@@ -4,8 +4,13 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import org.hibernate.StaleObjectStateException;
+import pt.psoft.g1.psoftg1.authormanagement.factories.AuthorNumberFactory;
+import pt.psoft.g1.psoftg1.bookmanagement.factories.IsbnFactory;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Isbn;
+import pt.psoft.g1.psoftg1.lendingmanagement.factories.LendingNumberFactory;
+import pt.psoft.g1.psoftg1.readermanagement.factories.ReaderNumberFactory;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderNumber;
+import pt.psoft.g1.psoftg1.shared.factories.NameFactory;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -22,6 +27,10 @@ import java.util.Optional;
  * natural key ({@code LendingNumber}) with its own business rules.
  * @author  rmfranca*/
 public class Lending {
+
+    private final ReaderNumberFactory readerNumberFactory;
+    private final IsbnFactory isbnFactory;
+    private final LendingNumberFactory lendingNumberFactory;
 
     /**
      * Natural key, which is not in use as it has its own business rules.
@@ -72,6 +81,7 @@ public class Lending {
      * This field is initialized as null as the lending can never begin with the book already returned
      * */
     @Size(min = 0, max = 1024)
+    @Getter
     private String commentary = null;
 
     //This is not to save in the database
@@ -95,14 +105,15 @@ public class Lending {
      * @param       lendingNumber lendingNumber
      * @throws      NullPointerException if any of the arguments is {@code null}
      * */
-    public Lending(Isbn isbn, ReaderNumber readerNumber, LendingNumber lendingNumber, int lendingDuration, int fineValuePerDayInCents){
-        try {
-            this.isbn = Objects.requireNonNull(isbn);
-            this.readerNumber = Objects.requireNonNull(readerNumber);
-        }catch (NullPointerException e){
-            throw new IllegalArgumentException("Null objects passed to lending");
-        }
-        this.lendingNumber = lendingNumber;
+    public Lending(String isbn, String readerNumber, String lendingNumber, int lendingDuration, int fineValuePerDayInCents, IsbnFactory isbnFactory, ReaderNumberFactory readerNumberFactory, LendingNumberFactory lendingNumberFactory) {
+        this.isbnFactory = isbnFactory;
+        this.readerNumberFactory = readerNumberFactory;
+        this.lendingNumberFactory = lendingNumberFactory;
+
+        this.isbn = this.isbnFactory.newIsbn(isbn);
+        this.readerNumber = this.readerNumberFactory.newReaderNumber(readerNumber);
+        this.lendingNumber = this.lendingNumberFactory.newLendingNumber(lendingNumber);
+
         this.startDate = LocalDate.now();
         this.limitDate = LocalDate.now().plusDays(lendingDuration);
         this.returnedDate = null;
@@ -115,15 +126,14 @@ public class Lending {
      * <p>Sets {@code commentary} and the current date as {@code returnedDate}.
      * <p>If {@code returnedDate} is after {@code limitDate}, fine is applied with corresponding value.
      *
-     * @param       desiredVersion to prevent editing a stale object.
      * @param       commentary written by a reader.
      * @throws      StaleObjectStateException if object was already modified by another user.
      * @throws      IllegalArgumentException  if {@code returnedDate} already has a value.
      */
-    public void setReturned(final long desiredVersion, final String commentary){
+    public void setReturned(final String commentary){
 
         if (this.returnedDate != null)
-            throw new IllegalArgumentException("book has already been returned!");
+            throw new IllegalArgumentException("Book has already been returned!");
 
         if(commentary != null)
             this.commentary = commentary;
@@ -185,7 +195,11 @@ public class Lending {
 
 
     /**Protected empty constructor for ORM only.*/
-    protected Lending() {}
+    protected Lending(ReaderNumberFactory readerNumberFactory, IsbnFactory isbnFactory, LendingNumberFactory lendingNumberFactory) {
+        this.readerNumberFactory = readerNumberFactory;
+        this.isbnFactory = isbnFactory;
+        this.lendingNumberFactory = lendingNumberFactory;
+    }
 
     /**Factory method meant to be only used in bootstrapping.*/
     public static Lending newBootstrappingLending(Lending lending,

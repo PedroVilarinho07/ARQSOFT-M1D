@@ -13,14 +13,15 @@ import pt.psoft.g1.psoftg1.bookmanagement.dto.request.CreateBookRequest;
 import pt.psoft.g1.psoftg1.bookmanagement.dto.request.SearchBooksQuery;
 import pt.psoft.g1.psoftg1.bookmanagement.dto.request.UpdateBookRequest;
 import pt.psoft.g1.psoftg1.bookmanagement.model.*;
+import pt.psoft.g1.psoftg1.bookmanagement.model.domainService.BookRecommendation;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import lombok.RequiredArgsConstructor;
-import pt.psoft.g1.psoftg1.genremanagement.repositories.IGenreRepository;
+import pt.psoft.g1.psoftg1.genremanagement.dto.request.RecommendationBooksRequestDTO;
+import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
 import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
 import pt.psoft.g1.psoftg1.exceptions.ConflictException;
 import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
-import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
 import pt.psoft.g1.psoftg1.shared.repositories.PhotoRepository;
 import pt.psoft.g1.psoftg1.shared.services.Page;
@@ -36,10 +37,11 @@ import java.util.Optional;
 public class BookServiceImpl implements BookService {
 
 	private final BookRepository bookRepository;
-	private final IGenreRepository IGenreRepository;
+	private final GenreRepository IGenreRepository;
 	private final AuthorRepository AuthorRepository;
 	private final PhotoRepository photoRepository;
 	private final ReaderRepository readerRepository;
+	private final BookRecommendation bookRecommendation;
 
 	@Value("${suggestionsLimitPerGenre}")
 	private long suggestionsLimitPerGenre;
@@ -169,7 +171,11 @@ public class BookServiceImpl implements BookService {
 				.orElseThrow(() -> new NotFoundException(Book.class, isbn));
 	}
 
-	public List<Book> getBooksSuggestionsForReader(String readerNumber) {
+	public List<Book> getBooksSuggestionsForReader(RecommendationBooksRequestDTO request) {
+		return bookRecommendation.bookRecommendations(request);
+	}
+
+	/*public List<Book> getBooksSuggestionsForReader(String readerNumber) {
 		List<Book> books = new ArrayList<>();
 
 		ReaderDetails readerDetails = readerRepository.findByReaderNumber(readerNumber)
@@ -200,6 +206,8 @@ public class BookServiceImpl implements BookService {
 
 		return books;
 	}
+
+	 */
 
 	@Override
 	public List<Book> searchBooks(Page page, SearchBooksQuery query) {
