@@ -1,0 +1,19 @@
+@startuml
+participant System
+
+System -> LMS : Request Recommendations
+LMS -> BookController : requestRecommendations(requestDTO)
+BookController -> BookService : getBooksSuggestionsForReader(requestDTO)
+
+BookService -> BookRecommendationService : bookRecommendations(requestDTO)
+BookRecommendationService -> GenreRepository : getGenreWithMostLendings(numGenres)
+
+GenreRepository --> BookRecommendationService : return genresList
+BookRecommendationService -> BookRepository : findXBooksByGenre(genre, numBooks)
+BookRepository --> BookRecommendationService : return bookList
+
+BookRecommendationService --> BookService : bookList
+BookService --> BookController : bookList
+BookController --> LMS : bookList
+LMS --> System : bookList
+@enduml
