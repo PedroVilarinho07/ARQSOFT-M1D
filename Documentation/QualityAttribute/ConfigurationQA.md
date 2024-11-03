@@ -1,0 +1,8 @@
+| Element         | Statement                                                                                                                                                                                     |
+|-----------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Stimulus**    | The need to change the software functionalities without changing the core code, using a configuration file.                                                                         |
+| **Stimulus Source** | ACME requires the ability to change the IAM (Identity and Access Management system), the DBMS (Database Management System), the recommendation algorithm, and the ID generation mechanism through a configuration file.                                                                             |
+| **Environment** | The system currently supports only one specific implementation for each functionality.                                                                                                        |
+| **Artifact**    | Clients and ACME                                                                                                                                                                              |
+| **Response**    | The system applies configuration changes without requiring code modifications.     |
+| **Response Measure** | The configurations must be applied at run-time by changing the configuration file.                                                                              |
