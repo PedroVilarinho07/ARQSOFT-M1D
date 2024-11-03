@@ -16,8 +16,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @PropertySource({"classpath:config/library.properties"})
 public class LendingTest {
@@ -185,6 +184,27 @@ public class LendingTest {
     public void testGetReturnedDateTest() {
         Lending lending = createLending();
         assertNull(lending.getReturnedDate());
+    }
+
+    @Test
+    public void getDaysOverdueTransparentTest(){
+        IsbnFactory doubleIsbnFactory = mock(IsbnFactory.class);
+        ReaderNumberFactory doubleReaderNumberFactory = mock(ReaderNumberFactory.class);
+        LendingNumberFactory doubleLendingNumberFactory = mock(LendingNumberFactory.class);
+
+        Isbn isbnDouble = mock(Isbn.class);
+        ReaderNumber readerNumberDouble = mock(ReaderNumber.class);
+        LendingNumber lendingNumberDouble = mock(LendingNumber.class);
+
+        when(doubleIsbnFactory.newIsbn(validIsbn)).thenReturn(isbnDouble);
+        when(doubleReaderNumberFactory.newReaderNumber(null)).thenReturn(readerNumberDouble);
+        when(doubleLendingNumberFactory.newLendingNumber(validLendingNumber)).thenReturn(lendingNumberDouble);
+
+        Lending lendingSpy = spy(new Lending(validIsbn, validReaderNumber, validLendingNumber, lendingDurationInDays, fineValuePerDayInCents, doubleIsbnFactory, doubleReaderNumberFactory, doubleLendingNumberFactory));
+
+        lendingSpy.getDaysOverdue();
+
+        verify(lendingSpy, times(1)).getDaysDelayed();
     }
 
 }
