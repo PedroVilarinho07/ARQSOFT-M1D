@@ -1,6 +1,8 @@
 package pt.psoft.g1.psoftg1.authormanagement.services;
 
-import pt.psoft.g1.psoftg1.authormanagement.api.AuthorLendingView;
+import pt.psoft.g1.psoftg1.authormanagement.dto.response.AuthorLendingResponseDTO;
+import pt.psoft.g1.psoftg1.authormanagement.dto.request.CreateAuthorRequest;
+import pt.psoft.g1.psoftg1.authormanagement.dto.request.UpdateAuthorRequest;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 
@@ -11,19 +13,19 @@ public interface AuthorService {
 
     Iterable<Author> findAll();
 
-    Optional<Author> findByAuthorNumber(Long authorNumber);
+    Optional<Author> findByAuthorNumber(String authorNumber);
 
     List<Author> findByName(String name);
 
     Author create(CreateAuthorRequest resource);
 
-    Author partialUpdate(Long authorNumber, UpdateAuthorRequest resource, long desiredVersion);
+    Author partialUpdate(String authorNumber, UpdateAuthorRequest resource);
 
-    List<AuthorLendingView> findTopAuthorByLendings();
+    List<AuthorLendingResponseDTO> findTopAuthorByLendings();
 
-    List<Book> findBooksByAuthorNumber(Long authorNumber);
+    List<Book> findBooksByAuthorNumber(String authorNumber);
 
-    List<Author> findCoAuthorsByAuthorNumber(Long authorNumber);
+    List<Author> findCoAuthorsByAuthorNumber(String authorNumber);
 
-    Optional<Author> removeAuthorPhoto(Long authorNumber, long desiredVersion);
+    Optional<Author> removeAuthorPhoto(String authorNumber);
 }

@@ -1,6 +1,10 @@
 package pt.psoft.g1.psoftg1.bookmanagement.services;
 
 
+import pt.psoft.g1.psoftg1.bookmanagement.dto.request.BookCountDTO;
+import pt.psoft.g1.psoftg1.bookmanagement.dto.request.CreateBookRequest;
+import pt.psoft.g1.psoftg1.bookmanagement.dto.request.SearchBooksQuery;
+import pt.psoft.g1.psoftg1.bookmanagement.dto.request.UpdateBookRequest;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.shared.services.Page;
 

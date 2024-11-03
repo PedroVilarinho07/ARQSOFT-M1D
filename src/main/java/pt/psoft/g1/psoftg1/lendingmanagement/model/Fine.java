@@ -12,14 +12,9 @@ import java.util.Objects;
  * <p>It stores its current value, and the associated {@code Lending}.
  * @author  rmfranca*/
 @Getter
-@Entity
 public class Fine {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long pk;
 
     @PositiveOrZero
-    @Column(updatable = false)
     private int fineValuePerDayInCents;
 
     /**Fine value in Euro cents*/
@@ -27,9 +22,7 @@ public class Fine {
     int centsValue;
 
     @Setter
-    @OneToOne(optional = false, orphanRemoval = true)
-    @JoinColumn(name = "lending_pk", nullable = false, unique = true)
-    private Lending lending;
+    private LendingNumber lendingNumber;
 
     /**
      * Constructs a new {@code Fine} object. Sets the current value of the fine,
@@ -41,7 +34,7 @@ public class Fine {
             throw new IllegalArgumentException("Lending is not overdue");
         fineValuePerDayInCents = lending.getFineValuePerDayInCents();
         centsValue = fineValuePerDayInCents * lending.getDaysDelayed();
-        this.lending = Objects.requireNonNull(lending);
+        this.lendingNumber = new LendingNumber(lending.getLendingNumber());
     }
 
     /**Protected empty constructor for ORM only.*/

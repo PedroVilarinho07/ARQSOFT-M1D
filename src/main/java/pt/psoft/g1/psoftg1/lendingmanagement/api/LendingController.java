@@ -15,12 +15,13 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
+import pt.psoft.g1.psoftg1.lendingmanagement.dto.response.LendingResponseDTO;
+import pt.psoft.g1.psoftg1.lendingmanagement.dto.response.LendingsAverageDurationResponseDTO;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
-import pt.psoft.g1.psoftg1.lendingmanagement.services.CreateLendingRequest;
+import pt.psoft.g1.psoftg1.lendingmanagement.dto.request.CreateLendingRequest;
 import pt.psoft.g1.psoftg1.lendingmanagement.services.LendingService;
-import pt.psoft.g1.psoftg1.lendingmanagement.services.SearchLendingQuery;
-import pt.psoft.g1.psoftg1.lendingmanagement.services.SetLendingReturnedRequest;
-import pt.psoft.g1.psoftg1.readermanagement.api.ReaderLendingsAvgPerMonthView;
+import pt.psoft.g1.psoftg1.lendingmanagement.dto.request.SearchLendingQuery;
+import pt.psoft.g1.psoftg1.lendingmanagement.dto.request.SetLendingReturnedRequest;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 import pt.psoft.g1.psoftg1.readermanagement.services.ReaderService;
 import pt.psoft.g1.psoftg1.shared.api.ListResponse;
@@ -49,7 +50,7 @@ public class LendingController {
     @Operation(summary = "Creates a new Lending")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<LendingView> create(@Valid @RequestBody final CreateLendingRequest resource) {
+    public ResponseEntity<LendingResponseDTO> create(@Valid @RequestBody final CreateLendingRequest resource) {
 
         final var lending = lendingService.create(resource);
 
@@ -59,13 +60,12 @@ public class LendingController {
 
         return ResponseEntity.created(newlendingUri)
                 .contentType(MediaType.parseMediaType("application/hal+json"))
-                .eTag(Long.toString(lending.getVersion()))
                 .body(lendingViewMapper.toLendingView(lending));
     }
 
     @Operation(summary = "Gets a specific Lending")
     @GetMapping(value = "/{year}/{seq}")
-    public ResponseEntity<LendingView> findByLendingNumber(
+    public ResponseEntity<LendingResponseDTO> findByLendingNumber(
             Authentication authentication,
             @PathVariable("year")
                 @Parameter(description = "The year of the Lending to find")
@@ -86,7 +86,7 @@ public class LendingController {
                     .orElseThrow(() -> new NotFoundException(ReaderDetails.class, loggedUser.getUsername()));
 
             //if logged Reader matches the one associated with the lending, skip ahead
-            if (!Objects.equals(loggedReaderDetails.getReaderNumber(), lending.getReaderDetails().getReaderNumber())) {
+            if (!Objects.equals(loggedReaderDetails.getReaderNumber(), lending.getReaderNumber())) {
                 throw new AccessDeniedException("Reader does not have permission to view this lending");
             }
         }
@@ -95,30 +95,25 @@ public class LendingController {
 
         return ResponseEntity.ok().location(lendingUri)
                 .contentType(MediaType.parseMediaType("application/hal+json"))
-                .eTag(Long.toString(lending.getVersion()))
                 .body(lendingViewMapper.toLendingView(lending));
     }
 
     @Operation(summary = "Sets a lending as returned")
-    @PatchMapping(value = "/{year}/{seq}")
-    public ResponseEntity<LendingView> setLendingReturned(
+    @PatchMapping(value = "/{year}/{lendingNumber}")
+    public ResponseEntity<LendingResponseDTO> setLendingReturned(
             final WebRequest request,
             final Authentication authentication,
-            @PathVariable("year")
-                @Parameter(description = "The year component of the Lending to find")
-                final Integer year,
-            @PathVariable("seq")
-                @Parameter(description = "The sequential component of the Lending to find")
-                final Integer seq,
+            @PathVariable("lendingNumber")
+                @Parameter(description = "The lending number of the Lending to find")
+                final String lendingNumber,
             @Valid @RequestBody final SetLendingReturnedRequest resource) {
         final String ifMatchValue = request.getHeader(ConcurrencyService.IF_MATCH);
         if (ifMatchValue == null || ifMatchValue.isEmpty() || ifMatchValue.equals("null")) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "You must issue a conditional PATCH using 'if-match'");
         }
-        String ln = year + "/" + seq;
-        final var maybeLending = lendingService.findByLendingNumber(ln)
-                .orElseThrow(() -> new NotFoundException(Lending.class, ln));
+        final var maybeLending = lendingService.findByLendingNumber(lendingNumber)
+                .orElseThrow(() -> new NotFoundException(Lending.class, lendingNumber));
 
         User loggedUser = userService.getAuthenticatedUser(authentication);
 
@@ -126,28 +121,27 @@ public class LendingController {
                 .orElseThrow(() -> new NotFoundException(ReaderDetails.class, loggedUser.getUsername()));
 
         //if logged Reader matches the one associated with the lending, skip ahead
-        if (!Objects.equals(loggedReaderDetails.getReaderNumber(), maybeLending.getReaderDetails().getReaderNumber())) {
+        if (!Objects.equals(loggedReaderDetails.getReaderNumber(), maybeLending.getReaderNumber())) {
             throw new AccessDeniedException("Reader does not have permission to edit this lending");
         }
 
-        final var lending = lendingService.setReturned(ln, resource, concurrencyService.getVersionFromIfMatchHeader(ifMatchValue));
+        final var lending = lendingService.setReturned(lendingNumber, resource, concurrencyService.getVersionFromIfMatchHeader(ifMatchValue));
 
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType("application/hal+json"))
-                .eTag(Long.toString(lending.getVersion()))
                 .body(lendingViewMapper.toLendingView(lending));
     }
 
     @Operation(summary = "Get average lendings duration")
     @GetMapping(value = "/avgDuration")
-    public @ResponseBody ResponseEntity<LendingsAverageDurationView> getAvgDuration() {
+    public @ResponseBody ResponseEntity<LendingsAverageDurationResponseDTO> getAvgDuration() {
 
         return ResponseEntity.ok().body(lendingViewMapper.toLendingsAverageDurationView(lendingService.getAverageDuration()));
     }
 
     @Operation(summary = "Get list of overdue lendings")
     @GetMapping(value = "/overdue")
-    public ListResponse<LendingView> getOverdueLendings(@Valid @RequestBody Page page) {
+    public ListResponse<LendingResponseDTO> getOverdueLendings(@Valid @RequestBody Page page) {
         final List<Lending> overdueLendings = lendingService.getOverdue(page);
         if(overdueLendings.isEmpty())
             throw new NotFoundException("No lendings to show");
@@ -155,7 +149,7 @@ public class LendingController {
     }
 
     @PostMapping("/search")
-    public ListResponse<LendingView> searchReaders(
+    public ListResponse<LendingResponseDTO> searchReaders(
             @RequestBody final SearchRequest<SearchLendingQuery> request) {
         final var readerList = lendingService.searchLendings(request.getPage(), request.getQuery());
         return new ListResponse<>(lendingViewMapper.toLendingView(readerList));

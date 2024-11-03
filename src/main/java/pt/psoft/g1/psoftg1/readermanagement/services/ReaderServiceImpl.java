@@ -6,9 +6,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
-import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
+import pt.psoft.g1.psoftg1.genremanagement.repositories.IGenreRepository;
 import pt.psoft.g1.psoftg1.exceptions.ConflictException;
 import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
+import pt.psoft.g1.psoftg1.readermanagement.dto.request.CreateReaderRequest;
+import pt.psoft.g1.psoftg1.readermanagement.dto.request.ReaderBookCountDTO;
+import pt.psoft.g1.psoftg1.readermanagement.dto.request.SearchReadersQuery;
+import pt.psoft.g1.psoftg1.readermanagement.dto.request.UpdateReaderRequest;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
 import pt.psoft.g1.psoftg1.shared.repositories.ForbiddenNameRepository;
@@ -28,7 +32,7 @@ public class ReaderServiceImpl implements ReaderService {
     private final ReaderRepository readerRepo;
     private final UserRepository userRepo;
     private final ReaderMapper readerMapper;
-    private final GenreRepository genreRepo;
+    private final IGenreRepository genreRepo;
     private final ForbiddenNameRepository forbiddenNameRepository;
     private final PhotoRepository photoRepository;
 
@@ -87,7 +91,7 @@ public class ReaderServiceImpl implements ReaderService {
     }
 
     @Override
-    public ReaderDetails update(final Long id, final UpdateReaderRequest request, final long desiredVersion, String photoURI){
+    public ReaderDetails update(final Long id, final UpdateReaderRequest request, String photoURI){
         final ReaderDetails readerDetails = readerRepo.findByUserId(id)
                 .orElseThrow(() -> new NotFoundException("Cannot find reader"));
 
@@ -111,7 +115,7 @@ public class ReaderServiceImpl implements ReaderService {
             request.setPhoto(null);
         }
 
-        readerDetails.applyPatch(desiredVersion, request, photoURI, interestList);
+        readerDetails.applyPatch(request, photoURI, interestList);
 
         userRepo.save(readerDetails.getReader());
         return readerRepo.save(readerDetails);
@@ -173,12 +177,12 @@ public class ReaderServiceImpl implements ReaderService {
     }
 
     @Override
-    public Optional<ReaderDetails> removeReaderPhoto(String readerNumber, long desiredVersion) {
+    public Optional<ReaderDetails> removeReaderPhoto(String readerNumber) {
         ReaderDetails readerDetails = readerRepo.findByReaderNumber(readerNumber)
                 .orElseThrow(() -> new NotFoundException("Cannot find reader"));
 
         String photoFile = readerDetails.getPhoto().getPhotoFile();
-        readerDetails.removePhoto(desiredVersion);
+        readerDetails.removePhoto();
         Optional<ReaderDetails> updatedReader = Optional.of(readerRepo.save(readerDetails));
         photoRepository.deleteByPhotoFile(photoFile);
         return updatedReader;

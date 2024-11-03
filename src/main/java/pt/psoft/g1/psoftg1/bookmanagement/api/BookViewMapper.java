@@ -5,8 +5,11 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
+import pt.psoft.g1.psoftg1.bookmanagement.dto.response.BookAverageLendingDurationResponseDTO;
+import pt.psoft.g1.psoftg1.bookmanagement.dto.response.BookCountResponseDTO;
+import pt.psoft.g1.psoftg1.bookmanagement.dto.response.BookResponseDTO;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
-import pt.psoft.g1.psoftg1.bookmanagement.services.BookCountDTO;
+import pt.psoft.g1.psoftg1.bookmanagement.dto.request.BookCountDTO;
 import pt.psoft.g1.psoftg1.shared.api.MapperInterface;
 
 import java.util.HashMap;
@@ -22,16 +25,14 @@ public abstract class BookViewMapper extends MapperInterface {
     @Mapping(target = "title", source = "title")
     @Mapping(target = "authors", expression = "java(mapAuthors(book.getAuthors()))")
     @Mapping(target = "_links", expression = "java(mapLinks(book))")
-    public abstract BookView toBookView(Book book);
+    public abstract BookResponseDTO toBookView(Book book);
 
-    public abstract List<BookView> toBookView(List<Book> bookList);
+    public abstract List<BookResponseDTO> toBookView(List<Book> bookList);
 
     @Mapping(target = "bookView", source = "book")
-    public abstract BookCountView toBookCountView(BookCountDTO bookCountDto);
+    public abstract List<BookCountResponseDTO> toBookCountView(List<BookCountDTO> bookCountDto);
 
-    public abstract List<BookCountView> toBookCountView(List<BookCountDTO> bookCountDtos);
-
-    public abstract BookAverageLendingDurationView toBookAverageLendingDurationView(Book book, Double averageLendingDuration);
+    public abstract BookAverageLendingDurationResponseDTO toBookAverageLendingDurationView(Book book, Double averageLendingDuration);
 
     protected List<String> mapAuthors(List<Author> authors) {
         return authors.stream()

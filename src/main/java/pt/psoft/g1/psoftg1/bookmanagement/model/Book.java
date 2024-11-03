@@ -4,45 +4,27 @@ package pt.psoft.g1.psoftg1.bookmanagement.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
-import org.hibernate.StaleObjectStateException;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
-import pt.psoft.g1.psoftg1.bookmanagement.services.UpdateBookRequest;
-import pt.psoft.g1.psoftg1.exceptions.ConflictException;
+import pt.psoft.g1.psoftg1.bookmanagement.dto.request.UpdateBookRequest;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.shared.model.EntityWithPhoto;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
-@Entity
-@Table(name = "Book", uniqueConstraints = {
-        @UniqueConstraint(name = "uc_book_isbn", columnNames = {"ISBN"})
-})
 public class Book extends EntityWithPhoto {
-    @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
-    long pk;
 
-    @Version
-    @Getter
-    private Long version;
-
-    @Embedded
     Isbn isbn;
 
     @Getter
-    @Embedded
     @NotNull
     Title title;
 
     @Getter
-    @ManyToOne
     @NotNull
     Genre genre;
 
     @Getter
-    @ManyToMany
     private List<Author> authors = new ArrayList<>();
 
     @Embedded
@@ -84,16 +66,10 @@ public class Book extends EntityWithPhoto {
     }
 
     public void removePhoto(long desiredVersion) {
-        if(desiredVersion != this.version) {
-            throw new ConflictException("Provided version does not match latest version of this object");
-        }
-
         setPhotoInternal(null);
     }
 
     public void applyPatch(final Long desiredVersion, UpdateBookRequest request) {
-        if (!Objects.equals(this.version, desiredVersion))
-            throw new StaleObjectStateException("Object was already modified by another user", this.pk);
 
         String title = request.getTitle();
         String description = request.getDescription();

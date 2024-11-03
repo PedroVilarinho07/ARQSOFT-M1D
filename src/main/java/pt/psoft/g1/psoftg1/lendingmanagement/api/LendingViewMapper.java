@@ -2,8 +2,8 @@ package pt.psoft.g1.psoftg1.lendingmanagement.api;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Named;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import pt.psoft.g1.psoftg1.lendingmanagement.dto.response.LendingResponseDTO;
+import pt.psoft.g1.psoftg1.lendingmanagement.dto.response.LendingsAverageDurationResponseDTO;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 import pt.psoft.g1.psoftg1.shared.api.MapperInterface;
 
@@ -19,15 +19,13 @@ import java.util.*;
 public abstract class LendingViewMapper extends MapperInterface {
 
     @Mapping(target = "lendingNumber", source = "lendingNumber")
-    @Mapping(target = "bookTitle", source = "book.title")
+    @Mapping(target = "isbn", source = "isbn")
     @Mapping(target = "fineValueInCents", expression = "java(lending.getFineValueInCents().orElse(null))")
-    @Mapping(target = "_links.self", source = ".", qualifiedByName = "lendingLink")
-    @Mapping(target = "_links.book", source = "book", qualifiedByName = "bookLink")
     @Mapping(target = "returnedDate", source = "returnedDate")
-    @Mapping(target = "_links.reader", source = "readerDetails", qualifiedByName = "readerLink")
-    public abstract LendingView toLendingView(Lending lending);
+    @Mapping(target = "_links", ignore = true)
+    public abstract LendingResponseDTO toLendingView(Lending lending);
 
-    public abstract List<LendingView> toLendingView(List<Lending> lendings);
+    public abstract List<LendingResponseDTO> toLendingView(List<Lending> lendings);
 
-    public abstract LendingsAverageDurationView toLendingsAverageDurationView(Double lendingsAverageDuration);
+    public abstract LendingsAverageDurationResponseDTO toLendingsAverageDurationView(Double lendingsAverageDuration);
 }
