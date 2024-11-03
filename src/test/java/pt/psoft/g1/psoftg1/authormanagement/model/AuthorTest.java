@@ -12,8 +12,7 @@ import pt.psoft.g1.psoftg1.shared.model.Photo;
 
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class AuthorTest {
     private final String validName = "João Alberto";
@@ -288,4 +287,141 @@ public class AuthorTest {
         assertNull(author.getPhoto());
     }
 
+    @Test
+    void applyPatchTransparentTest() {
+        AuthorNumberFactory doubleAuthorNumberFactory = mock(AuthorNumberFactory.class);
+        NameFactory doubleNameFactory = mock(NameFactory.class);
+        BioFactory doubleBioFactory = mock(BioFactory.class);
+        PhotoFactory doublePhotoFactory = mock(PhotoFactory.class);
+
+        AuthorNumber authorNumberDouble = mock(AuthorNumber.class);
+        Bio bioDouble = mock(Bio.class);
+        Name nameDouble = mock(Name.class);
+        Photo photoDouble = mock(Photo.class);
+
+        String newName = "nameee";
+        String newBio = "newBio";
+        Name newNameDouble = mock(Name.class);
+        when(doubleNameFactory.newName(newName)).thenReturn(newNameDouble);
+
+        when(doubleAuthorNumberFactory.newAuthorNumber(validAuthorNumber)).thenReturn(authorNumberDouble);
+        when(doubleNameFactory.newName(validName)).thenReturn(nameDouble);
+        when(doubleBioFactory.newBio(validBio)).thenReturn(bioDouble);
+        when(doublePhotoFactory.newPhoto(validPhotoUri)).thenReturn(photoDouble);
+
+        Author authorSpy = spy(new Author(validAuthorNumber,validName,validBio, null, doubleAuthorNumberFactory, doubleNameFactory, doubleBioFactory, doublePhotoFactory));
+        UpdateAuthorRequest update = new UpdateAuthorRequest(null, newName, null, null);
+        authorSpy.applyPatch(update);
+
+        verify(authorSpy, times(1)).setName(newName);
+        verify(authorSpy, never()).setBio(anyString());
+        verify(authorSpy, never()).setPhoto(anyString());
+
+        update = new UpdateAuthorRequest(newBio, null, null, null);
+        authorSpy.applyPatch(update);
+
+        verify(authorSpy).setBio(newBio);
+        verify(authorSpy, times(1)).setName(newName);
+        verify(authorSpy, never()).setPhoto(anyString());
+    }
+
+    @Test
+    void setBioTransparentTest() {
+        AuthorNumberFactory doubleAuthorNumberFactory = mock(AuthorNumberFactory.class);
+        NameFactory doubleNameFactory = mock(NameFactory.class);
+        BioFactory doubleBioFactory = mock(BioFactory.class);
+        PhotoFactory doublePhotoFactory = mock(PhotoFactory.class);
+
+        AuthorNumber authorNumberDouble = mock(AuthorNumber.class);
+        Bio bioDouble = mock(Bio.class);
+        Name nameDouble = mock(Name.class);
+        Photo photoDouble = mock(Photo.class);
+
+        String newBio = "newBio";
+
+        when(doubleAuthorNumberFactory.newAuthorNumber(validAuthorNumber)).thenReturn(authorNumberDouble);
+        when(doubleNameFactory.newName(validName)).thenReturn(nameDouble);
+        when(doubleBioFactory.newBio(validBio)).thenReturn(bioDouble);
+        when(doublePhotoFactory.newPhoto(validPhotoUri)).thenReturn(photoDouble);
+
+        Author authorSpy = spy(new Author(validAuthorNumber,validName,validBio, null, doubleAuthorNumberFactory, doubleNameFactory, doubleBioFactory, doublePhotoFactory));
+        authorSpy.setBio(newBio);
+
+        verify(doubleBioFactory, times(1)).newBio(newBio);
+    }
+
+    @Test
+    void setNameTransparentTest() {
+        AuthorNumberFactory doubleAuthorNumberFactory = mock(AuthorNumberFactory.class);
+        NameFactory doubleNameFactory = mock(NameFactory.class);
+        BioFactory doubleBioFactory = mock(BioFactory.class);
+        PhotoFactory doublePhotoFactory = mock(PhotoFactory.class);
+
+        AuthorNumber authorNumberDouble = mock(AuthorNumber.class);
+        Bio bioDouble = mock(Bio.class);
+        Name nameDouble = mock(Name.class);
+        Photo photoDouble = mock(Photo.class);
+
+        String newName = "newName";
+
+        when(doubleAuthorNumberFactory.newAuthorNumber(validAuthorNumber)).thenReturn(authorNumberDouble);
+        when(doubleNameFactory.newName(validName)).thenReturn(nameDouble);
+        when(doubleBioFactory.newBio(validBio)).thenReturn(bioDouble);
+        when(doublePhotoFactory.newPhoto(validPhotoUri)).thenReturn(photoDouble);
+
+        Author authorSpy = spy(new Author(validAuthorNumber,validName,validBio, null, doubleAuthorNumberFactory, doubleNameFactory, doubleBioFactory, doublePhotoFactory));
+        authorSpy.setName(newName);
+
+        verify(doubleNameFactory, times(1)).newName(newName);
+    }
+
+    @Test
+    void setAuthorNumberTransparentTest() {
+        AuthorNumberFactory doubleAuthorNumberFactory = mock(AuthorNumberFactory.class);
+        NameFactory doubleNameFactory = mock(NameFactory.class);
+        BioFactory doubleBioFactory = mock(BioFactory.class);
+        PhotoFactory doublePhotoFactory = mock(PhotoFactory.class);
+
+        AuthorNumber authorNumberDouble = mock(AuthorNumber.class);
+        Bio bioDouble = mock(Bio.class);
+        Name nameDouble = mock(Name.class);
+        Photo photoDouble = mock(Photo.class);
+
+        String newNumber = "newNumber";
+
+        when(doubleAuthorNumberFactory.newAuthorNumber(validAuthorNumber)).thenReturn(authorNumberDouble);
+        when(doubleNameFactory.newName(validName)).thenReturn(nameDouble);
+        when(doubleBioFactory.newBio(validBio)).thenReturn(bioDouble);
+        when(doublePhotoFactory.newPhoto(validPhotoUri)).thenReturn(photoDouble);
+
+        Author authorSpy = spy(new Author(validAuthorNumber,validName,validBio, null, doubleAuthorNumberFactory, doubleNameFactory, doubleBioFactory, doublePhotoFactory));
+        authorSpy.setAuthorNumber(newNumber);
+
+        verify(doubleAuthorNumberFactory, times(1)).newAuthorNumber(newNumber);
+    }
+
+    @Test
+    void setPhotoTransparentTest() {
+        AuthorNumberFactory doubleAuthorNumberFactory = mock(AuthorNumberFactory.class);
+        NameFactory doubleNameFactory = mock(NameFactory.class);
+        BioFactory doubleBioFactory = mock(BioFactory.class);
+        PhotoFactory doublePhotoFactory = mock(PhotoFactory.class);
+
+        AuthorNumber authorNumberDouble = mock(AuthorNumber.class);
+        Bio bioDouble = mock(Bio.class);
+        Name nameDouble = mock(Name.class);
+        Photo photoDouble = mock(Photo.class);
+
+        String newPhoto = "newPhoto";
+
+        when(doubleAuthorNumberFactory.newAuthorNumber(validAuthorNumber)).thenReturn(authorNumberDouble);
+        when(doubleNameFactory.newName(validName)).thenReturn(nameDouble);
+        when(doubleBioFactory.newBio(validBio)).thenReturn(bioDouble);
+        when(doublePhotoFactory.newPhoto(validPhotoUri)).thenReturn(photoDouble);
+
+        Author authorSpy = spy(new Author(validAuthorNumber,validName,validBio, null, doubleAuthorNumberFactory, doubleNameFactory, doubleBioFactory, doublePhotoFactory));
+        authorSpy.setPhoto(newPhoto);
+
+        verify(doublePhotoFactory, times(1)).newPhoto(newPhoto);
+    }
 }

@@ -28,7 +28,6 @@ public class LendingFactory {
 
     public Lending newLendingBootstrap(String isbn, String readerNumber, int lendingDuration, int fineValuePerDayInCents, LocalDate startDate, LocalDate returnedDate){
         Lending lending = newLending(isbn, readerNumber, lendingDuration, fineValuePerDayInCents);
-        Lending.newBootstrappingLending(lending, startDate, returnedDate, lendingDuration);
-        return lending;
+        return Lending.newBootstrappingLending(lending, startDate, returnedDate, lendingDuration);
     }
 }
