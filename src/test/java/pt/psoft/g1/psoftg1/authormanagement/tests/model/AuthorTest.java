@@ -1,10 +1,14 @@
-package pt.psoft.g1.psoftg1.authormanagement.model;
+package pt.psoft.g1.psoftg1.authormanagement.tests.model;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import pt.psoft.g1.psoftg1.authormanagement.dto.request.CreateAuthorRequest;
 import pt.psoft.g1.psoftg1.authormanagement.dto.request.UpdateAuthorRequest;
 import pt.psoft.g1.psoftg1.authormanagement.factories.AuthorNumberFactory;
 import pt.psoft.g1.psoftg1.authormanagement.factories.BioFactory;
+import pt.psoft.g1.psoftg1.authormanagement.model.Author;
+import pt.psoft.g1.psoftg1.authormanagement.model.AuthorNumber;
+import pt.psoft.g1.psoftg1.authormanagement.model.Bio;
 import pt.psoft.g1.psoftg1.shared.factories.NameFactory;
 import pt.psoft.g1.psoftg1.shared.factories.PhotoFactory;
 import pt.psoft.g1.psoftg1.shared.model.Name;
@@ -30,7 +34,7 @@ public class AuthorTest {
         BioFactory doubleBioFactory = mock(BioFactory.class);
         PhotoFactory doublePhotoFactory = mock(PhotoFactory.class);
 
-        Bio bioDouble = mock(Bio.class);
+        Bio bioDouble = Mockito.mock(Bio.class);
         Name nameDouble = mock(Name.class);
         Photo photoDouble = mock(Photo.class);
 
@@ -56,8 +60,8 @@ public class AuthorTest {
         BioFactory doubleBioFactory = mock(BioFactory.class);
         PhotoFactory doublePhotoFactory = mock(PhotoFactory.class);
 
-        AuthorNumber authorNumberDouble = mock(AuthorNumber.class);
-        Bio bioDouble = mock(Bio.class);
+        AuthorNumber authorNumberDouble = Mockito.mock(AuthorNumber.class);
+        Bio bioDouble = Mockito.mock(Bio.class);
         Photo photoDouble = mock(Photo.class);
 
         when(doubleAuthorNumberFactory.newAuthorNumber(validAuthorNumber)).thenReturn(authorNumberDouble);
@@ -82,7 +86,7 @@ public class AuthorTest {
         BioFactory doubleBioFactory = mock(BioFactory.class);
         PhotoFactory doublePhotoFactory = mock(PhotoFactory.class);
 
-        AuthorNumber authorNumberDouble = mock(AuthorNumber.class);
+        AuthorNumber authorNumberDouble = Mockito.mock(AuthorNumber.class);
         Name nameDouble = mock(Name.class);
         Photo photoDouble = mock(Photo.class);
 
@@ -107,9 +111,9 @@ public class AuthorTest {
         BioFactory doubleBioFactory = mock(BioFactory.class);
         PhotoFactory doublePhotoFactory = mock(PhotoFactory.class);
 
-        AuthorNumber authorNumberDouble = mock(AuthorNumber.class);
+        AuthorNumber authorNumberDouble = Mockito.mock(AuthorNumber.class);
         Name nameDouble = mock(Name.class);
-        Bio bioDouble = mock(Bio.class);
+        Bio bioDouble = Mockito.mock(Bio.class);
 
         when(doubleAuthorNumberFactory.newAuthorNumber(validAuthorNumber)).thenReturn(authorNumberDouble);
         when(doubleNameFactory.newName(validName)).thenReturn(nameDouble);
@@ -135,9 +139,9 @@ public class AuthorTest {
         BioFactory doubleBioFactory = mock(BioFactory.class);
         PhotoFactory doublePhotoFactory = mock(PhotoFactory.class);
 
-        AuthorNumber authorNumberDouble = mock(AuthorNumber.class);
+        AuthorNumber authorNumberDouble = Mockito.mock(AuthorNumber.class);
         Name nameDouble = mock(Name.class);
-        Bio bioDouble = mock(Bio.class);
+        Bio bioDouble = Mockito.mock(Bio.class);
         Photo photoDouble = mock(Photo.class);
 
         when(doubleAuthorNumberFactory.newAuthorNumber(validAuthorNumber)).thenReturn(authorNumberDouble);
@@ -165,9 +169,9 @@ public class AuthorTest {
         BioFactory doubleBioFactory = mock(BioFactory.class);
         PhotoFactory doublePhotoFactory = mock(PhotoFactory.class);
 
-        AuthorNumber authorNumberDouble = mock(AuthorNumber.class);
+        AuthorNumber authorNumberDouble = Mockito.mock(AuthorNumber.class);
         Name nameDouble = mock(Name.class);
-        Bio bioDouble = mock(Bio.class);
+        Bio bioDouble = Mockito.mock(Bio.class);
 
         when(doubleAuthorNumberFactory.newAuthorNumber(validAuthorNumber)).thenReturn(authorNumberDouble);
         when(doubleNameFactory.newName(validName)).thenReturn(nameDouble);
@@ -194,13 +198,13 @@ public class AuthorTest {
         BioFactory doubleBioFactory = mock(BioFactory.class);
         PhotoFactory doublePhotoFactory = mock(PhotoFactory.class);
 
-        AuthorNumber authorNumberDouble = mock(AuthorNumber.class);
-        Bio bioDouble = mock(Bio.class);
+        AuthorNumber authorNumberDouble = Mockito.mock(AuthorNumber.class);
+        Bio bioDouble = Mockito.mock(Bio.class);
         Name nameDouble = mock(Name.class);
         Photo photoDouble = mock(Photo.class);
 
         String newBio = "biooo";
-        Bio newBioDouble = mock(Bio.class);
+        Bio newBioDouble = Mockito.mock(Bio.class);
         when(newBioDouble.toString()).thenReturn(newBio);
         when(doubleBioFactory.newBio(newBio)).thenReturn(newBioDouble);
 
@@ -222,8 +226,8 @@ public class AuthorTest {
         BioFactory doubleBioFactory = mock(BioFactory.class);
         PhotoFactory doublePhotoFactory = mock(PhotoFactory.class);
 
-        AuthorNumber authorNumberDouble = mock(AuthorNumber.class);
-        Bio bioDouble = mock(Bio.class);
+        AuthorNumber authorNumberDouble = Mockito.mock(AuthorNumber.class);
+        Bio bioDouble = Mockito.mock(Bio.class);
         Name nameDouble = mock(Name.class);
         Photo photoDouble = mock(Photo.class);
 
@@ -249,8 +253,8 @@ public class AuthorTest {
         BioFactory doubleBioFactory = mock(BioFactory.class);
         PhotoFactory doublePhotoFactory = mock(PhotoFactory.class);
 
-        AuthorNumber authorNumberDouble = mock(AuthorNumber.class);
-        Bio bioDouble = mock(Bio.class);
+        AuthorNumber authorNumberDouble = Mockito.mock(AuthorNumber.class);
+        Bio bioDouble = Mockito.mock(Bio.class);
         Name nameDouble = mock(Name.class);
         Photo photoDouble = mock(Photo.class);
 
@@ -272,8 +276,8 @@ public class AuthorTest {
         BioFactory doubleBioFactory = mock(BioFactory.class);
         PhotoFactory doublePhotoFactory = mock(PhotoFactory.class);
 
-        AuthorNumber authorNumberDouble = mock(AuthorNumber.class);
-        Bio bioDouble = mock(Bio.class);
+        AuthorNumber authorNumberDouble = Mockito.mock(AuthorNumber.class);
+        Bio bioDouble = Mockito.mock(Bio.class);
         Name nameDouble = mock(Name.class);
         Photo photoDouble = mock(Photo.class);
 
@@ -294,8 +298,8 @@ public class AuthorTest {
         BioFactory doubleBioFactory = mock(BioFactory.class);
         PhotoFactory doublePhotoFactory = mock(PhotoFactory.class);
 
-        AuthorNumber authorNumberDouble = mock(AuthorNumber.class);
-        Bio bioDouble = mock(Bio.class);
+        AuthorNumber authorNumberDouble = Mockito.mock(AuthorNumber.class);
+        Bio bioDouble = Mockito.mock(Bio.class);
         Name nameDouble = mock(Name.class);
         Photo photoDouble = mock(Photo.class);
 
@@ -332,8 +336,8 @@ public class AuthorTest {
         BioFactory doubleBioFactory = mock(BioFactory.class);
         PhotoFactory doublePhotoFactory = mock(PhotoFactory.class);
 
-        AuthorNumber authorNumberDouble = mock(AuthorNumber.class);
-        Bio bioDouble = mock(Bio.class);
+        AuthorNumber authorNumberDouble = Mockito.mock(AuthorNumber.class);
+        Bio bioDouble = Mockito.mock(Bio.class);
         Name nameDouble = mock(Name.class);
         Photo photoDouble = mock(Photo.class);
 
@@ -357,8 +361,8 @@ public class AuthorTest {
         BioFactory doubleBioFactory = mock(BioFactory.class);
         PhotoFactory doublePhotoFactory = mock(PhotoFactory.class);
 
-        AuthorNumber authorNumberDouble = mock(AuthorNumber.class);
-        Bio bioDouble = mock(Bio.class);
+        AuthorNumber authorNumberDouble = Mockito.mock(AuthorNumber.class);
+        Bio bioDouble = Mockito.mock(Bio.class);
         Name nameDouble = mock(Name.class);
         Photo photoDouble = mock(Photo.class);
 
@@ -382,8 +386,8 @@ public class AuthorTest {
         BioFactory doubleBioFactory = mock(BioFactory.class);
         PhotoFactory doublePhotoFactory = mock(PhotoFactory.class);
 
-        AuthorNumber authorNumberDouble = mock(AuthorNumber.class);
-        Bio bioDouble = mock(Bio.class);
+        AuthorNumber authorNumberDouble = Mockito.mock(AuthorNumber.class);
+        Bio bioDouble = Mockito.mock(Bio.class);
         Name nameDouble = mock(Name.class);
         Photo photoDouble = mock(Photo.class);
 
@@ -407,8 +411,8 @@ public class AuthorTest {
         BioFactory doubleBioFactory = mock(BioFactory.class);
         PhotoFactory doublePhotoFactory = mock(PhotoFactory.class);
 
-        AuthorNumber authorNumberDouble = mock(AuthorNumber.class);
-        Bio bioDouble = mock(Bio.class);
+        AuthorNumber authorNumberDouble = Mockito.mock(AuthorNumber.class);
+        Bio bioDouble = Mockito.mock(Bio.class);
         Name nameDouble = mock(Name.class);
         Photo photoDouble = mock(Photo.class);
 

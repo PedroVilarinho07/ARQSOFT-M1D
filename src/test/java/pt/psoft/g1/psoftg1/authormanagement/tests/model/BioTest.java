@@ -1,6 +1,7 @@
-package pt.psoft.g1.psoftg1.authormanagement.model;
+package pt.psoft.g1.psoftg1.authormanagement.tests.model;
 
 import org.junit.jupiter.api.Test;
+import pt.psoft.g1.psoftg1.authormanagement.model.Bio;
 
 import java.lang.reflect.Constructor;
 

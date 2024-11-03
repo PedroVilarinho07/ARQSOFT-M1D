@@ -1,4 +1,4 @@
-package pt.psoft.g1.psoftg1.lendingmanagement;
+package pt.psoft.g1.psoftg1.lendingmanagement.model;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -7,8 +7,6 @@ import org.springframework.context.annotation.PropertySource;
 import pt.psoft.g1.psoftg1.bookmanagement.factories.IsbnFactory;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Isbn;
 import pt.psoft.g1.psoftg1.lendingmanagement.factories.LendingNumberFactory;
-import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
-import pt.psoft.g1.psoftg1.lendingmanagement.model.LendingNumber;
 import pt.psoft.g1.psoftg1.readermanagement.factories.ReaderNumberFactory;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderNumber;
 
