@@ -122,7 +122,7 @@ public class BookSQLRepo implements BookRepository {
         return findXBooksByGenre(genre, numberOfBooks);
     }
 
-    private String getMostLentGenreByReader(String readerNumber) {
+    public String getMostLentGenreByReader(String readerNumber) {
         // Primeira consulta: obter os ISBNs mais emprestados pelo leitor
         TypedQuery<String> query = entityManager.createQuery(
                 "SELECT l.isbn FROM LendingDataModel l " +

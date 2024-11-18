@@ -24,10 +24,12 @@ public class Isbn implements Serializable {
         if(isbn == null || isbn.isBlank()) {
             throw new IllegalArgumentException("Isbn cannot be null nor blank");
         }
+
         if (isbn.matches("0+")) {
             throw new IllegalArgumentException("ISBN cannot be all zeros.");
         }
         //return (isbn.length() == 10) ? isValidIsbn10(isbn) : isValidIsbn13(isbn);
+
         return isbn.length() != 10 || isValidIsbn10(isbn);
     }
 
@@ -65,6 +67,7 @@ public class Isbn implements Serializable {
         }
 
         return checksum == Integer.parseInt(isbn.substring(12));
+
     }
 
     public String toString() {

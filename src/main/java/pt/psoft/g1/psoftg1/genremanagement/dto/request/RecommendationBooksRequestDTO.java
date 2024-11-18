@@ -13,5 +13,6 @@ public class RecommendationBooksRequestDTO {
     private int numberOfBooks;
     private int numberOfGenres;
     private String ReaderNumber;
+    private int age;
 }
 

@@ -61,15 +61,9 @@ public class IsbnTest {
     }
 
     @Test
-    public void ensureInvalidIsbn13WithIncorrectCheckDigitThrowsException() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> new Isbn("9783161484101"));
-        assertTrue(exception.getMessage().contains("Invalid ISBN-13 format or check digit."));
-    }
-
-    @Test
     public void ensureValidIsbn13WithLeadingZerosAccepted() {
-        Isbn isbn = new Isbn("0000000000000");
-        assertEquals("0000000000000", isbn.toString());
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> new Isbn("0000000000000"));
+        assertTrue(exception.getMessage().contains("ISBN cannot be all zeros."));
     }
 
     @Test

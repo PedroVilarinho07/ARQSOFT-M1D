@@ -152,7 +152,7 @@ public class BookMongoRepository implements BookRepository {
     }
 
     // Método auxiliar para identificar o gênero mais emprestado de um leitor específico
-    private String getMostLentGenreByReader(String readerNumber) {
+    public String getMostLentGenreByReader(String readerNumber) {
         // Simula a contagem de empréstimos por gênero usando streams e coletores
         return staticBooks.stream()
                 .filter(book -> book.getGenre() != null && book.getAuthors() != null)
