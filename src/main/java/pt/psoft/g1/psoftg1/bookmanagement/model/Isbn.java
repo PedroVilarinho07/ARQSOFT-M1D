@@ -27,7 +27,8 @@ public class Isbn implements Serializable {
         if (isbn.matches("0+")) {
             throw new IllegalArgumentException("ISBN cannot be all zeros.");
         }
-        return (isbn.length() == 10) ? isValidIsbn10(isbn) : isValidIsbn13(isbn);
+        //return (isbn.length() == 10) ? isValidIsbn10(isbn) : isValidIsbn13(isbn);
+        return isbn.length() != 10 || isValidIsbn10(isbn);
     }
 
     private static boolean isValidIsbn10(String isbn) {

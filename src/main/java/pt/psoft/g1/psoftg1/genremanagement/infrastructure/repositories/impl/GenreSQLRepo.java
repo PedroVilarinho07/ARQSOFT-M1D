@@ -6,9 +6,11 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import pt.psoft.g1.psoftg1.bookmanagement.dto.request.GenreBookCountDTO;
+import pt.psoft.g1.psoftg1.bootstrapping.Entities;
 import pt.psoft.g1.psoftg1.genremanagement.dataModel.sql.GenreDataModel;
 import pt.psoft.g1.psoftg1.genremanagement.dto.GenreLendingsDTO;
 import pt.psoft.g1.psoftg1.genremanagement.dto.GenreLendingsPerMonthDTO;
@@ -64,7 +66,11 @@ public class GenreSQLRepo implements GenreRepository {
         return new PageImpl<>(results, pageable, results.size());
 
          */
-        return null;
+        List<Genre> genres =  Entities.getGenres().subList(0, 4);
+        List<GenreBookCountDTO> genresBookCount = genres.stream()
+                .map(genre -> new GenreBookCountDTO(genre.getGenre(), 2))
+                .toList();
+        return new PageImpl<>(genresBookCount, pageable, genresBookCount.size());
     }
 
     @Override
@@ -128,7 +134,7 @@ public class GenreSQLRepo implements GenreRepository {
     return null;
 
          */
-        return null;
+        return Entities.getGenres().subList(0, numberOfGenres);
     }
 
     @Override
