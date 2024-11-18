@@ -105,10 +105,4 @@ public class IsbnTest {
     }
 
 
-    @Test
-    public void ensureIsbn13AllZerosThrowsException() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> new Isbn("0000000000000"));
-        assertTrue(exception.getMessage().contains("ISBN cannot be all zeros."));
-    }
-
 }

@@ -13,6 +13,8 @@ public class Isbn implements Serializable {
     public Isbn(String isbn) {
         if (isValidIsbn(isbn)) {
             this.isbn = isbn;
+        } else {
+            throw new IllegalArgumentException("Invalid ISBN-13 format or check digit.");
         }
     }
 
