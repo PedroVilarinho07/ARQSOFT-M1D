@@ -1,9 +1,7 @@
 package pt.psoft.g1.psoftg1.readermanagement.model;
 
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import pt.psoft.g1.psoftg1.exceptions.ConflictException;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.readermanagement.dto.request.UpdateReaderRequest;
 import pt.psoft.g1.psoftg1.shared.model.EntityWithPhoto;
@@ -42,6 +40,28 @@ public class ReaderDetails extends EntityWithPhoto {
     private List<Genre> interestList;
 
     public ReaderDetails(int readerNumber, Reader reader, String birthDate, String phoneNumber, boolean gdpr, boolean marketing, boolean thirdParty, String photoURI, List<Genre> interestList) {
+        if(reader == null || phoneNumber == null) {
+            throw new IllegalArgumentException("Provided argument resolves to null object");
+        }
+
+        if(!gdpr) {
+            throw new IllegalArgumentException("Readers must agree with the GDPR rules");
+        }
+
+        setReader(reader);
+        setReaderNumber(new ReaderNumber(readerNumber));
+        setPhoneNumber(new PhoneNumber(phoneNumber));
+        setBirthDate(new BirthDate(birthDate));
+        //By the client specifications, gdpr can only have the value of true. A setter will be created anyways in case we have accept no gdpr consent later on the project
+        setGdprConsent(true);
+
+        setPhotoInternal(photoURI);
+        setMarketingConsent(marketing);
+        setThirdPartySharingConsent(thirdParty);
+        setInterestList(interestList);
+    }
+
+    public ReaderDetails(String readerNumber, Reader reader, String birthDate, String phoneNumber, boolean gdpr, boolean marketing, boolean thirdParty, String photoURI, List<Genre> interestList) {
         if(reader == null || phoneNumber == null) {
             throw new IllegalArgumentException("Provided argument resolves to null object");
         }
@@ -140,7 +160,7 @@ public class ReaderDetails extends EntityWithPhoto {
 
     public String getPhoneNumber() { return this.phoneNumber.toString();}
 
-    protected ReaderDetails() {
+    public ReaderDetails() {
         // for ORM only
     }
 }

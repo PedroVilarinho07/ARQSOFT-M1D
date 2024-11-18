@@ -106,6 +106,6 @@ public class ReaderMongoRepository implements ReaderRepository {
 
     @Override
     public List<ReaderDetails> searchReaderDetails(pt.psoft.g1.psoftg1.shared.services.Page page, SearchReadersQuery query) {
-        return null;
+        return List.of();
     }
 }

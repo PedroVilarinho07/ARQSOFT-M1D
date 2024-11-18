@@ -16,12 +16,19 @@ public class ReaderDataModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "READER_ID")
+    @Column (name = "PK")
     private Long pk;
+
+    @Column(name = "READER_ID", unique = true, nullable = false)
+    private Long userId;
 
     @Column(name = "READER_NUMBER", nullable = false, length = 32, unique = true)
     @NotNull
     private String readerNumber;
+
+    @Column(name = "READER_NAME", nullable = false, length = 120, unique = true)
+    @NotNull
+    private String readerName;
 
     @Column(name = "BIRTH_DATE", nullable = false)
     private LocalDate birthDate;
@@ -42,13 +49,14 @@ public class ReaderDataModel {
     private boolean thirdPartySharingConsent;
 
     @ElementCollection
-    @CollectionTable(name = "READER_INTERESTS", joinColumns = @JoinColumn(name = "READER_ID"))
+    @CollectionTable(name = "READER_INTERESTS", joinColumns = @JoinColumn(name = "PK", referencedColumnName = "PK"))
     @Column(name = "INTEREST_GENRE")
     private List<String> interestList;
 
     public ReaderDataModel() {}
 
-    public ReaderDataModel(String readerNumber, LocalDate birthDate, String phoneNumber, boolean gdprConsent, boolean marketingConsent, boolean thirdPartySharingConsent, String photoURI, List<String> interestList) {
+    public ReaderDataModel(String readerName, String readerNumber, LocalDate birthDate, String phoneNumber, boolean gdprConsent, boolean marketingConsent, boolean thirdPartySharingConsent, String photoURI, List<String> interestList) {
+        this.readerName = readerName;
         this.readerNumber = readerNumber;
         this.birthDate = birthDate;
         this.phoneNumber = phoneNumber;

@@ -13,10 +13,14 @@ import lombok.Setter;
 public class AuthorDataModel {
 
     @Id
-    @Column(name = "AUTHOR_NUMBER")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "PK")
+    private Long pk;
+
+    @Column(name = "AUTHOR_NUMBER", unique = true, nullable = false)
     private String authorNumber;
 
-    @Column(name = "NAME", nullable = false, length = 255)
+    @Column(name = "NAME", nullable = false)
     @NotNull
     @Size(min = 1, max = 255)
     private String name;

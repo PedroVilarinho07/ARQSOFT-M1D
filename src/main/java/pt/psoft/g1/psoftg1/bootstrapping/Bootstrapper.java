@@ -11,16 +11,17 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.psoft.g1.psoftg1.authormanagement.factories.AuthorFactory;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
+import pt.psoft.g1.psoftg1.bookmanagement.factories.BookFactory;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
 import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
 import pt.psoft.g1.psoftg1.lendingmanagement.factories.LendingFactory;
-import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 import pt.psoft.g1.psoftg1.lendingmanagement.repositories.LendingRepository;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
+import pt.psoft.g1.psoftg1.shared.model.domainService.IIdGenerator;
 import pt.psoft.g1.psoftg1.shared.repositories.PhotoRepository;
 import pt.psoft.g1.psoftg1.shared.services.ForbiddenNameService;
 
@@ -42,11 +43,13 @@ public class Bootstrapper implements CommandLineRunner {
 
     private final LendingFactory lendingFactory;
     private final AuthorFactory authorFactory;
+    private final BookFactory bookFactory;
     private final GenreRepository genreRepository;
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
     private final LendingRepository lendingRepository;
     private final ReaderRepository readerRepository;
+    private final IIdGenerator idGenerator;
     private final PhotoRepository photoRepository;
 
     private final ForbiddenNameService forbiddenNameService;
@@ -57,9 +60,13 @@ public class Bootstrapper implements CommandLineRunner {
         createAuthors();
         createGenres();
         createBooks();
-        loadForbiddenNames();
         createLendings();
+        /*
+        loadForbiddenNames();
+
         createPhotos();
+
+         */
     }
 
     private void createAuthors() {
@@ -70,9 +77,10 @@ public class Bootstrapper implements CommandLineRunner {
             authorRepository.save(a1);
         }
         if (authorRepository.searchByNameName("Antoine de Saint Exupéry").isEmpty()) {
-            authorRepository.save(authorFactory.newAuthor("Antoine de Saint Exupéry",
+            Author a2 = authorFactory.newAuthor("Antoine de Saint Exupéry",
                     "Antoine de Saint-Exupéry nasceu a 29 de junho de 1900 em Lyon. Faz o seu batismo de voo aos 12 anos, aos 22 torna-se piloto militar e é como capitão que em 1939 se junta à Força Aérea francesa em luta contra a ocupação nazi. A aviação e a guerra viriam a revelar-se elementos centrais de toda a sua obra literária, onde se destacam títulos como Correio do Sul (1929), o seu primeiro romance, Voo Noturno (1931), que logo se tornou um êxito de vendas internacional, e Piloto de Guerra (1942), retrato da sua participação na Segunda Guerra Mundial. Em 1943 publicaria aquela que é reconhecida como a sua obra-prima, O Principezinho, um dos livros mais traduzidos em todo o mundo. A sua morte, aos 44 anos, num acidente de aviação durante uma missão de reconhecimento no sul de França, permanece ainda hoje um mistério.",
-                    null));
+                    null);
+            authorRepository.save(a2);
         }
         if (authorRepository.searchByNameName("Alexandre Pereira").isEmpty()) {
             authorRepository.save(authorFactory.newAuthor("Alexandre Pereira",
@@ -156,12 +164,11 @@ public class Bootstrapper implements CommandLineRunner {
             List<Author> authors = new ArrayList<>();
             if (genre.isPresent() && !author.isEmpty()) {
                 authors.add(author.get(0));
-                Book book = new Book("9789720706386",
+                Book book = bookFactory.newBook("9789720706386",
                         "O País das Pessoas de Pernas Para o Ar ",
                         "Fazendo uso do humor e do nonsense, o livro reúne quatro histórias divertidas e com múltiplos significados: um país onde as pessoas vivem de pernas para o ar, que nos é apresentado por um passarinho chamado Fausto; a vida de um peixinho vermelho que escrevia um livro que a Sara não sabia ler; um Menino Jesus que não queria ser Deus, pois só queria brincar como as outras crianças; um bolo que queria ser comido, mas que não foi, por causa do pecado da gula. ",
-                        genre.get(),
+                        genre.get().getGenre(),
                         authors,null);
-
                 bookRepository.save(book);
             }
         }
@@ -385,7 +392,6 @@ public class Bootstrapper implements CommandLineRunner {
 
     private void createLendings() {
         int i;
-        int seq = 0;
         final var book1 = bookRepository.findByIsbn("9789720706386");
         final var book2 = bookRepository.findByIsbn("9789723716160");
         final var book3 = bookRepository.findByIsbn("9789895612864");
@@ -421,39 +427,46 @@ public class Bootstrapper implements CommandLineRunner {
                             readerDetails4.get(), readerDetails5.get(), readerDetails6.get()});
         }
 
-        Lending lending;
         LocalDate startDate;
         LocalDate returnedDate;
 
         //Lendings 1 through 3 (late, returned)
-        for(i = 0; i < 3; i++){
-            startDate = LocalDate.of(2024, 1,31-i);
-            returnedDate = LocalDate.of(2024,2,15+i);
-            lendingRepository.save(lendingFactory.newLendingBootstrap(books.get(i).getIsbn(), readers.get(i*2).getReaderNumber(), lendingDurationInDays, fineValuePerDayInCents, startDate, returnedDate) );
+        for(i = 0; i < 3; i++) {
+            if (lendingExists(books.get(i).getIsbn(), readers.get(i * 2).getReaderNumber())) {
+                startDate = LocalDate.of(2024, 1, 31 - i);
+                returnedDate = LocalDate.of(2024, 2, 15 + i);
+                lendingRepository.save(lendingFactory.newLendingBootstrap(books.get(i).getIsbn(), readers.get(i * 2).getReaderNumber(), lendingDurationInDays, fineValuePerDayInCents, startDate, returnedDate));
+
+            }
         }
 
         //Lendings 4 through 6 (overdue, not returned)
-        for(i = 0; i < 3; i++){
-            startDate = LocalDate.of(2024, 3,25+i);
-            lendingRepository.save(lendingFactory.newLendingBootstrap(books.get(1+i).getIsbn(), readers.get(1+i*2).getReaderNumber(), lendingDurationInDays, fineValuePerDayInCents, startDate, null) );
+        for(i = 0; i < 3; i++) {
+            if (lendingExists(books.get(1 + i).getIsbn(), readers.get(1 + i * 2).getReaderNumber())) {
+                startDate = LocalDate.of(2024, 3, 25 + i);
+                lendingRepository.save(lendingFactory.newLendingBootstrap(books.get(1 + i).getIsbn(), readers.get(1 + i * 2).getReaderNumber(), lendingDurationInDays, fineValuePerDayInCents, startDate, null));
+            }
         }
         //Lendings 7 through 9 (late, overdue, not returned)
         for(i = 0; i < 3; i++){
-            startDate = LocalDate.of(2024, 4,(1+2*i));
-            lendingRepository.save(lendingFactory.newLendingBootstrap(books.get(3/(i+1)).getIsbn(), readers.get(i*2).getReaderNumber(), lendingDurationInDays, fineValuePerDayInCents, startDate, null) );
+            if(lendingExists(books.get(3 / (i + 1)).getIsbn(), readers.get(i * 2).getReaderNumber())) {
+                startDate = LocalDate.of(2024, 4, (1 + 2 * i));
+                lendingRepository.save(lendingFactory.newLendingBootstrap(books.get(3 / (i + 1)).getIsbn(), readers.get(i * 2).getReaderNumber(), lendingDurationInDays, fineValuePerDayInCents, startDate, null));
+            }
         }
 
         //Lendings 10 through 12 (returned)
         for(i = 0; i < 3; i++){
-            startDate = LocalDate.of(2024, 5,(i+1));
-            returnedDate = LocalDate.of(2024,5,(i+2));
-            lendingRepository.save(lendingFactory.newLendingBootstrap(books.get(3-i).getIsbn(), readers.get(1+i*2).getReaderNumber(), lendingDurationInDays, fineValuePerDayInCents, startDate, returnedDate) );
+            if(lendingExists(books.get(3 - i).getIsbn(), readers.get(1 + i * 2).getReaderNumber())) {
+                startDate = LocalDate.of(2024, 5, (i + 1));
+                returnedDate = LocalDate.of(2024, 5, (i + 2));
+                lendingRepository.save(lendingFactory.newLendingBootstrap(books.get(3 - i).getIsbn(), readers.get(1 + i * 2).getReaderNumber(), lendingDurationInDays, fineValuePerDayInCents, startDate, returnedDate));
+            }
         }
 
         //Lendings 13 through 18 (returned)
         for(i = 0; i < 6; i++){
-            ++seq;
-            if(lendingRepository.findByLendingNumber("2024/" + seq).isEmpty()){
+            if(lendingExists(books.get(i).getIsbn(), readers.get(i).getReaderNumber())){
                 startDate = LocalDate.of(2024, 5,(i+2));
                 returnedDate = LocalDate.of(2024,5,(i+2*2));
                 lendingRepository.save(lendingFactory.newLendingBootstrap(books.get(i).getIsbn(), readers.get(i).getReaderNumber(), lendingDurationInDays, fineValuePerDayInCents, startDate, returnedDate) );
@@ -461,30 +474,45 @@ public class Bootstrapper implements CommandLineRunner {
         }
 
         //Lendings 19 through 23 (returned)
-        for(i = 0; i < 6; i++){
-            startDate = LocalDate.of(2024, 5,(i+8));
-            returnedDate = LocalDate.of(2024,5,(2*i+8));
-            lendingRepository.save(lendingFactory.newLendingBootstrap(books.get(i).getIsbn(), readers.get(1+i%4).getReaderNumber(), lendingDurationInDays, fineValuePerDayInCents, startDate, returnedDate) );
+        for(i = 0; i < 6; i++) {
+            if (lendingExists(books.get(i).getIsbn(), readers.get(1 + i % 4).getReaderNumber())) {
+                startDate = LocalDate.of(2024, 5, (i + 8));
+                returnedDate = LocalDate.of(2024, 5, (2 * i + 8));
+                lendingRepository.save(lendingFactory.newLendingBootstrap(books.get(i).getIsbn(), readers.get(1 + i % 4).getReaderNumber(), lendingDurationInDays, fineValuePerDayInCents, startDate, returnedDate));
+
+            }
         }
 
         //Lendings 24 through 29 (returned)
-        for(i = 0; i < 6; i++){
-            startDate = LocalDate.of(2024, 5,(i+18));
-            returnedDate = LocalDate.of(2024,5,(2*i+18));
-            lendingRepository.save(lendingFactory.newLendingBootstrap(books.get(i).getIsbn(), readers.get(i%2+2).getReaderNumber(), lendingDurationInDays, fineValuePerDayInCents, startDate, returnedDate) );
+        for(i = 0; i < 6; i++) {
+            if (lendingExists(books.get(i).getIsbn(), readers.get(i % 2 + 2).getReaderNumber())) {
+                startDate = LocalDate.of(2024, 5, (i + 18));
+                returnedDate = LocalDate.of(2024, 5, (2 * i + 18));
+                lendingRepository.save(lendingFactory.newLendingBootstrap(books.get(i).getIsbn(), readers.get(i % 2 + 2).getReaderNumber(), lendingDurationInDays, fineValuePerDayInCents, startDate, returnedDate));
+            }
         }
 
         //Lendings 30 through 35 (not returned, not overdue)
-        for(i = 0; i < 6; i++){
-            startDate = LocalDate.of(2024, 6,(i/3+1));
-            lendingRepository.save(lendingFactory.newLendingBootstrap(books.get(i).getIsbn(), readers.get(i%2+3).getReaderNumber(), lendingDurationInDays, fineValuePerDayInCents, startDate, null) );
+        for(i = 0; i < 6; i++) {
+            if (lendingExists(books.get(i).getIsbn(), readers.get(i % 2 + 3).getReaderNumber())) {
+                startDate = LocalDate.of(2024, 6, (i / 3 + 1));
+                lendingRepository.save(lendingFactory.newLendingBootstrap(books.get(i).getIsbn(), readers.get(i % 2 + 3).getReaderNumber(), lendingDurationInDays, fineValuePerDayInCents, startDate, null));
+            }
         }
 
         //Lendings 36 through 45 (not returned, not overdue)
-        for(i = 0; i < 10; i++){
-            startDate = LocalDate.of(2024, 6,(2+i/4));
-            lendingRepository.save(lendingFactory.newLendingBootstrap(books.get(i).getIsbn(), readers.get(4-i%4).getReaderNumber(), lendingDurationInDays, fineValuePerDayInCents, startDate, null) );
+        for(i = 0; i < 10; i++) {
+            if (lendingExists(books.get(i).getIsbn(), readers.get(4 - i % 4).getReaderNumber())) {
+                startDate = LocalDate.of(2024, 6, (2 + i / 4));
+                lendingRepository.save(lendingFactory.newLendingBootstrap(books.get(i).getIsbn(), readers.get(4 - i % 4).getReaderNumber(), lendingDurationInDays, fineValuePerDayInCents, startDate, null));
+            }
         }
+    }
+
+    private boolean lendingExists(String isbn, String readerNumber) {
+        String lendingNumberStr = lendingFactory.lendingValue(isbn, readerNumber);
+        String lendingNumber = idGenerator.generateId(lendingNumberStr);
+        return lendingRepository.findByLendingNumber(lendingNumber).isPresent();
     }
 
     private void createPhotos() {

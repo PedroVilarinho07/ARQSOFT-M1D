@@ -17,6 +17,7 @@ import java.time.LocalDate;
 public class LendingDataModel {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "LENDING_ID")
     private Long pk;
 

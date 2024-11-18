@@ -30,4 +30,9 @@ public class LendingFactory {
         Lending lending = newLending(isbn, readerNumber, lendingDuration, fineValuePerDayInCents);
         return Lending.newBootstrappingLending(lending, startDate, returnedDate, lendingDuration);
     }
+
+    public Lending newLendingWithLendingNumber(String lendingNumber, String isbn, String readerNumber, int lendingDuration, int fineValuePerDayInCents, LocalDate startDate, LocalDate returnedDate){
+        Lending lending = new Lending(isbn, readerNumber, lendingNumber, lendingDuration, fineValuePerDayInCents, isbnFactory, readerNumberFactory, lendingNumberFactory);
+        return Lending.newBootstrappingLending(lending, startDate, returnedDate, lendingDuration);
+    }
 }

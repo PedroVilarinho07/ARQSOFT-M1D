@@ -6,9 +6,22 @@ import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class AuthorSQLMapper {
+
+    public static AuthorDataModel convertToDataModelAuthor(Author author) {
+        String photo;
+        try {
+            photo = author.getPhoto().getPhotoFile();
+        } catch (Exception ignored) {photo = null;}
+
+        return new AuthorDataModel(
+                author.getAuthorNumber().toString(),
+                author.getName(),
+                author.getBio(),
+                photo
+        );
+    }
 
     public static Author convertToDomainAuthor(AuthorFactory authorFactory, AuthorDataModel dataModel) {
 

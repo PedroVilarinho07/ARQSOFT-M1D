@@ -37,6 +37,23 @@ public class BookSQLRepo implements BookRepository {
     private final BookFactory bookFactory;
 
     @Override
+    public Book save(Book book) {
+        BookDataModel bookDataModel = BookSQLMapper.convertToDataModelBook(book);
+        entityManager.persist(bookDataModel);
+        return BookSQLMapper.convertToDomainBook(bookFactory, authorFactory, bookDataModel);
+    }
+
+    @Override
+    public Optional<Book> findByIsbn(String isbn) {
+        TypedQuery<BookDataModel> query = entityManager.createQuery(
+                "SELECT b FROM BookDataModel b WHERE b.isbn = :isbn", BookDataModel.class);
+        query.setParameter("isbn", isbn);
+
+        BookDataModel bookDataModel = query.getResultStream().findFirst().orElse(null);
+        return Optional.ofNullable(bookDataModel != null ? BookSQLMapper.convertToDomainBook(bookFactory, authorFactory, bookDataModel) : null);
+    }
+
+    @Override
     public List<Book> findByGenre(String genre) {
         return findXBooksByGenre(genre, null);
     }
@@ -69,11 +86,6 @@ public class BookSQLRepo implements BookRepository {
     }
 
     @Override
-    public Optional<Book> findByIsbn(String isbn) {
-        return Optional.empty();
-    }
-
-    @Override
     public Page<BookCountDTO> findTop5BooksLent(LocalDate oneYearAgo, Pageable pageable) {
         return null;
     }
@@ -86,11 +98,6 @@ public class BookSQLRepo implements BookRepository {
     @Override
     public List<Book> searchBooks(pt.psoft.g1.psoftg1.shared.services.Page page, SearchBooksQuery query) {
         return List.of();
-    }
-
-    @Override
-    public Book save(Book book) {
-        return null;
     }
 
     @Override

@@ -1,8 +1,5 @@
 package pt.psoft.g1.psoftg1.bookmanagement.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
-import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
@@ -10,24 +7,24 @@ import java.io.Serializable;
 
 @EqualsAndHashCode
 public class Isbn implements Serializable {
-    @Size(min = 10, max = 13)
 
     String isbn;
 
     public Isbn(String isbn) {
-        if (isbn == null || isbn.isBlank()) {
-            throw new IllegalArgumentException("Isbn cannot be null or blank");
-        }
-        if (isbn.matches("0+")) {
-            throw new IllegalArgumentException("ISBN cannot be all zeros.");
+        if (isValidIsbn(isbn)) {
+            this.isbn = isbn;
         }
     }
 
     protected Isbn() {};
 
-    private static boolean isValidIsbn(String isbn) {
-        if(isbn == null)
-            throw new IllegalArgumentException("Isbn cannot be null");
+    private boolean isValidIsbn(String isbn) {
+        if(isbn == null || isbn.isBlank()) {
+            throw new IllegalArgumentException("Isbn cannot be null nor blank");
+        }
+        if (isbn.matches("0+")) {
+            throw new IllegalArgumentException("ISBN cannot be all zeros.");
+        }
         return (isbn.length() == 10) ? isValidIsbn10(isbn) : isValidIsbn13(isbn);
     }
 

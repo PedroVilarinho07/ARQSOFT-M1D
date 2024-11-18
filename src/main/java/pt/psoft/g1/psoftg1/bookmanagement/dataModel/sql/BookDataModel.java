@@ -41,7 +41,7 @@ public class BookDataModel {
     @JoinTable(
             name = "BOOK_AUTHORS",
             joinColumns = @JoinColumn(name = "BOOK_ID"),
-            inverseJoinColumns = @JoinColumn(name = "AUTHOR_ID")
+            inverseJoinColumns = @JoinColumn(name = "AUTHOR_NUMBER", referencedColumnName = "AUTHOR_NUMBER")
     )
     private List<AuthorDataModel> authors;
 
