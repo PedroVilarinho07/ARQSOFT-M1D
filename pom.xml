@@ -180,8 +180,30 @@
 					<targetClasses>
 						<param>pt.psoft.g1.*.model*</param>
 					</targetClasses>
+					<mutationThreshold>40</mutationThreshold>
 				</configuration>
 			</plugin>
+
+			<!-- Static Code Analysis -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>3.1.2</version>
+				<executions>
+					<execution>
+						<phase>validate</phase>
+						<goals>
+							<goal>checkstyle</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<configLocation>checkstyle.xml</configLocation>
+					<outputFile>target/site/checkstyle.html</outputFile>
+					<outputFormat>html</outputFormat>
+				</configuration>
+			</plugin>
+
 		</plugins>
 	</build>
 
