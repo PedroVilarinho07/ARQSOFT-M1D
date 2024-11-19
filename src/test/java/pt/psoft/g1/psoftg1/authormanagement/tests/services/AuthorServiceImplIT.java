@@ -1,48 +1,25 @@
 package pt.psoft.g1.psoftg1.authormanagement.tests.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import pt.psoft.g1.psoftg1.authormanagement.api.AuthorAPIMapper;
-import pt.psoft.g1.psoftg1.authormanagement.factories.AuthorFactory;
-import pt.psoft.g1.psoftg1.authormanagement.model.Author;
-import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
 import pt.psoft.g1.psoftg1.authormanagement.services.AuthorService;
-import pt.psoft.g1.psoftg1.authormanagement.services.AuthorServiceMapper;
 import pt.psoft.g1.psoftg1.bookmanagement.api.BookViewMapper;
-import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
-import pt.psoft.g1.psoftg1.shared.repositories.PhotoRepository;
-import pt.psoft.g1.psoftg1.shared.services.ConcurrencyService;
 import pt.psoft.g1.psoftg1.shared.services.FileStorageService;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
 import static org.mockito.Mockito.mock;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 @AutoConfigureMockMvc
 @ActiveProfiles({"sql", "idGeneratorHash", "recommendationY"})
 @SpringBootTest
-public class AuthorServiceImplIntegrationTest {
+public class AuthorServiceImplIT {
 
     @Autowired
     private MockMvc mockMvc;
