@@ -185,24 +185,17 @@
 			</plugin>
 
 			<!-- Static Code Analysis -->
+			<!--
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
 				<version>3.1.2</version>
-				<executions>
-					<execution>
-						<phase>validate</phase>
-						<goals>
-							<goal>checkstyle</goal>
-						</goals>
-					</execution>
-				</executions>
 				<configuration>
 					<configLocation>checkstyle.xml</configLocation>
-					<outputFile>target/site/checkstyle.html</outputFile>
-					<outputFormat>html</outputFormat>
+					<outputFile>target/checkstyle-result.xml</outputFile>
+					<outputFileFormat>xml</outputFileFormat>
 				</configuration>
-			</plugin>
+			</plugin>-->
 
 		</plugins>
 	</build>
