@@ -97,9 +97,8 @@ public class AuthorServiceImplIntegrationTest {
                 .andExpect(status().isOk());
     }
 
- */
 
-/*Test
+
  AuthorResponseDTO mockAuthorResponseDTO = mock(AuthorResponseDTO.class);
 
         when(mockAuthorResponseDTO.getAuthorNumber()).thenReturn(authorNumber);
@@ -173,3 +172,4 @@ public class AuthorServiceImplIntegrationTest {
 
  */
 }
+
