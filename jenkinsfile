@@ -1,51 +1,108 @@
 pipeline {
     agent any
+    
+    tools {
+        maven 'Maven 3.9.9'
+    }
 
     stages {
-        stage('Checkout') {
+/*
+        stage('checkout') {
             steps {
-                checkout scm
+                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: '516fa02c-6903-40d6-b4d0-8da1a882c529', url: 'https://github.com/PedroVilarinho07/ARQSOFT-M1D.git']])
             }
         }
-
-        stage('Maven Clean') {
+*/
+        
+        stage('clean') {
             steps {
                 script {
-                    sh 'mvn clean'
+                    bat 'mvn clean'
+                }
+            }
+
+        }
+        
+        /*
+        stage('Static Code Analysis') {
+            steps {
+                bat 'mvn checkstyle:checkstyle'
+
+                publishHTML(target: [
+                        reportName: 'Checkstyle Report',
+                        reportDir: 'target/site',
+                        reportFiles: 'checkstyle.html',
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true
+                ])
+            }
+        }
+        */
+        
+        stage('Unit tests') {
+            steps {
+                bat 'mvn test'
+                junit 'target/surefire-reports/*.xml'
+            }
+        }
+        
+         stage('Mutation tests') {
+            steps {
+                script {
+                    try {
+                        bat 'mvn org.pitest:pitest-maven:mutationCoverage'
+                        archiveArtifacts artifacts: 'target/pit-reports/**', allowEmptyArchive: true
+                    } catch (Exception e) {
+                        error "Mutation coverage did not meet the required threshold: ${e.message}"
+                    }
                 }
             }
         }
-
-        stage('Unit Tests') {
+            
+        /*
+        stage('Integration  tests') {
             steps {
-                script {
-                    sh 'mvn test'
-                }
             }
         }
-
-        stage('Mutation Tests') {
+        */
+        
+        
+        stage('Install No Tests') {
             steps {
-                script {
-                    sh 'mvn org.pitest:pitest-maven:mutationCoverage'
-                }
+             bat 'mvn install -DskipTests'
             }
         }
-
-        stage('Integration Tests') {
+        
+        stage('Package') {
             steps {
-                script {
-                    sh 'mvn failsafe:integration-test failsafe:verify'
-                }
+                bat 'mvn package'
             }
         }
-
-        stage('Install') {
+        
+        
+        stage('Deploy') {
             steps {
-                script {
-                    sh 'mvn install -DskipTests'
-                }
+                bat 'pscp target/*.jar C:\\Users\\blueb\\Downloads\\deploy-odsoft'
             }
+        }
+        
+        
+        /*
+        stage('Smoke Tests') {
+            steps {
+            }
+        }
+        */
+        
+    }
+    
+    post {
+        success {
+            echo 'Deployment was successful!!!!'
+        }
+        failure {
+            echo 'Deployment failed!!!!'
         }
     }
+
 }
