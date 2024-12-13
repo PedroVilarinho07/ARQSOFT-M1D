@@ -1,109 +1,165 @@
 pipeline {
     agent any
-    
-    tools {
-        maven 'Maven 3.9.9'
+
+    environment {
+        GITHUB_URL = 'https://github.com/PedroVilarinho07/ARQSOFT-M1D'
+        GITHUB_BRANCH = 'main'
+        GITHUB_CREDENTIALS = 'Password_for_Github'
+
+        JENKINS_NODE_COOKIE = "dontKillMe"
     }
 
     stages {
-/*
-        stage('checkout') {
+        stage('Checkout') {
             steps {
-                checkout scmGit(branches: [[name: '*//*main']], extensions: [], userRemoteConfigs: [[credentialsId: '516fa02c-6903-40d6-b4d0-8da1a882c529', url: 'https://github.com/PedroVilarinho07/ARQSOFT-M1D.git']])
+                git branch: "${GITHUB_BRANCH}", 
+                    credentialsId: "${GITHUB_CREDENTIALS}", 
+                    url: "${GITHUB_URL}"
             }
         }
-        */
-        
-        
-        stage('clean') {
+
+        stage('Clean') {
             steps {
                 script {
-                    bat 'mvn clean'
+                    runCmd('./mvnw clean')
                 }
             }
+        }
 
-        }
-        
-        /*
-        stage('Static Code Analysis') {
-            steps {
-                bat 'mvn checkstyle:checkstyle'
-
-                publishHTML(target: [
-                        reportName: 'Checkstyle Report',
-                        reportDir: 'target/site',
-                        reportFiles: 'checkstyle.html',
-                        alwaysLinkToLastBuild: true,
-                        keepAll: true
-                ])
-            }
-        }
-        */
-        
-        stage('Unit tests') {
-            steps {
-                bat 'mvn test'
-                junit 'target/surefire-reports/*.xml'
-            }
-        }
-        
-         stage('Mutation tests') {
+        stage('Validate') {
             steps {
                 script {
-                    try {
-                        bat 'mvn org.pitest:pitest-maven:mutationCoverage'
-                        archiveArtifacts artifacts: 'target/pit-reports/**', allowEmptyArchive: true
-                    } catch (Exception e) {
-                        error "Mutation coverage did not meet the required threshold: ${e.message}"
+                    runCmd('./mvnw validate')
+                }
+            }
+        }
+
+        stage('Compile') {
+            steps {
+                script {
+                    runCmd('./mvnw compile')
+                }
+            }
+        }
+
+        stage('Checkstyle') {
+            steps {
+                script {
+                    runCmd('./mvnw checkstyle:checkstyle')
+                }
+            }
+        }
+
+        stage('Spotbugs') {
+            steps {
+                script {
+                    runCmd('./mvnw spotbugs:spotbugs')
+                }
+            }
+        }
+
+        stage('Generate Javadoc') {
+            steps {
+                script {
+                    runCmd('./mvnw javadoc:javadoc')
+                }
+            }
+        }
+
+        stage('Unit Tests') {
+            steps {
+                script {
+                    runCmd('./mvnw test')
+                }
+            }
+        }
+
+        stage('Integration Tests') {
+            steps {
+                script {
+                    runCmd('./mvnw failsafe:integration-test')
+                }
+            }
+        }
+
+        stage('Acceptance Tests') {
+            steps {
+                script {
+                    runCmd('./mvnw test -Dtest=**/*AcceptanceTestCase')
+                }
+            }
+        }
+
+        stage('Mutation Coverage') {
+            steps {
+                script {
+                    runCmd('./mvnw test-compile org.pitest:pitest-maven:mutationCoverage')
+                }
+            }
+        }
+
+        stage('Surefire Reports') {
+            steps {
+                script {
+                    runCmd('./mvnw surefire-report:report-only')
+                    runCmd('./mvnw surefire-report:failsafe-report-only')
+                }
+            }
+        }
+
+        stage('Jacoco Report') {
+            steps {
+                script {
+                    runCmd('./mvnw jacoco:report')
+                }
+            }
+        }
+
+        stage('Package') {
+            steps {
+                script {
+                    runCmd('./mvnw package -DskipTests')
+                }
+            }
+        }
+
+        stage('Verify') {
+            steps {
+                script {
+                    runCmd('./mvnw verify -DskipTests')
+                }
+            }
+        }
+
+        stage('Install') {
+            steps {
+                script {
+                    runCmd('./mvnw install -DskipTests')
+                }
+            }
+        }
+
+        stage('Deploy Application') {
+            steps {
+                script {
+                    def jarPath = "${workspace}/target/psoft-g1-0.0.1-SNAPSHOT.jar"
+                    def command = "java -jar ${jarPath}"
+
+                    if (isUnix()) {
+                        sh "nohup ${command} --server.port=2228 &"
+                    } else {
+                        bat "start /B ${command} --server.port=8081"
                     }
                 }
             }
         }
-            
-        /*
-        stage('Integration  tests') {
-            steps {
-            }
-        }
-        */
-        
-        
-        stage('Install No Tests') {
-            steps {
-             bat 'mvn install -DskipTests'
-            }
-        }
-        
-        stage('Package') {
-            steps {
-                bat 'mvn package'
-            }
-        }
-        
-        
-        stage('Deploy') {
-            steps {
-                bat 'pscp target/*.jar C:\\Users\\blueb\\Downloads\\deploy-odsoft'
-            }
-        }
-        
-        
-        /*
-        stage('Smoke Tests') {
-            steps {
-            }
-        }
-        */
-        
-    }
-    
-    post {
-        success {
-            echo 'Deployment was successful!!!!'
-        }
-        failure {
-            echo 'Deployment failed!!!!'
-        }
     }
 
+    def runCmd(cmd) {
+        if (isUnix()) {
+            sh cmd
+        } else {
+            bat cmd
+        }
+    }
 }
