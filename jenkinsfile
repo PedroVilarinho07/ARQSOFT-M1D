@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     environment {
-        GITHUB_URL = 'https://github.com/PedroVilarinho07/ARQSOFT-M1D'
-        GITHUB_BRANCH = 'main'
-        GITHUB_CREDENTIALS = 'Password_for_Github'
+        GITHUB_URL = ''
+        GITHUB_BRANCH = ''
+        GITHUB_CREDENTIALS = ''
 
         JENKINS_NODE_COOKIE = "dontKillMe"
     }
@@ -21,7 +21,11 @@ pipeline {
         stage('Clean') {
             steps {
                 script {
-                    runCmd('./mvnw clean')
+                    if (isUnix()) {
+                        sh './mvnw clean'
+                    } else {
+                        bat './mvnw clean'
+                    }
                 }
             }
         }
@@ -29,7 +33,11 @@ pipeline {
         stage('Validate') {
             steps {
                 script {
-                    runCmd('./mvnw validate')
+                    if (isUnix()) {
+                        sh './mvnw validate'
+                    } else {
+                        bat './mvnw validate'
+                    }
                 }
             }
         }
@@ -37,7 +45,11 @@ pipeline {
         stage('Compile') {
             steps {
                 script {
-                    runCmd('./mvnw compile')
+                    if (isUnix()) {
+                        sh './mvnw compile'
+                    } else {
+                        bat './mvnw compile'
+                    }
                 }
             }
         }
@@ -45,7 +57,11 @@ pipeline {
         stage('Checkstyle') {
             steps {
                 script {
-                    runCmd('./mvnw checkstyle:checkstyle')
+                    if (isUnix()) {
+                        sh './mvnw checkstyle:checkstyle'
+                    } else {
+                        bat './mvnw checkstyle:checkstyle'
+                    }
                 }
             }
         }
@@ -53,7 +69,11 @@ pipeline {
         stage('Spotbugs') {
             steps {
                 script {
-                    runCmd('./mvnw spotbugs:spotbugs')
+                    if (isUnix()) {
+                        sh './mvnw spotbugs:spotbugs'
+                    } else {
+                        bat './mvnw spotbugs:spotbugs'
+                    }
                 }
             }
         }
@@ -61,7 +81,11 @@ pipeline {
         stage('Generate Javadoc') {
             steps {
                 script {
-                    runCmd('./mvnw javadoc:javadoc')
+                    if (isUnix()) {
+                        sh './mvnw javadoc:javadoc'
+                    } else {
+                        bat './mvnw javadoc:javadoc'
+                    }
                 }
             }
         }
@@ -69,7 +93,11 @@ pipeline {
         stage('Unit Tests') {
             steps {
                 script {
-                    runCmd('./mvnw test')
+                    if (isUnix()) {
+                        sh './mvnw test'
+                    } else {
+                        bat './mvnw test'
+                    }
                 }
             }
         }
@@ -77,7 +105,11 @@ pipeline {
         stage('Integration Tests') {
             steps {
                 script {
-                    runCmd('./mvnw failsafe:integration-test')
+                    if (isUnix()) {
+                        sh './mvnw failsafe:integration-test'
+                    } else {
+                        bat './mvnw failsafe:integration-test'
+                    }
                 }
             }
         }
@@ -85,7 +117,11 @@ pipeline {
         stage('Acceptance Tests') {
             steps {
                 script {
-                    runCmd('./mvnw test -Dtest=**/*AcceptanceTestCase')
+                    if (isUnix()) {
+                        sh './mvnw test -Dtest=**/*AcceptanceTestCase'
+                    } else {
+                        bat './mvnw test -Dtest=**/*AcceptanceTestCase'
+                    }
                 }
             }
         }
@@ -93,7 +129,11 @@ pipeline {
         stage('Mutation Coverage') {
             steps {
                 script {
-                    runCmd('./mvnw test-compile org.pitest:pitest-maven:mutationCoverage')
+                    if (isUnix()) {
+                        sh './mvnw test-compile org.pitest:pitest-maven:mutationCoverage'
+                    } else {
+                        bat './mvnw test-compile org.pitest:pitest-maven:mutationCoverage'
+                    }
                 }
             }
         }
@@ -101,8 +141,13 @@ pipeline {
         stage('Surefire Reports') {
             steps {
                 script {
-                    runCmd('./mvnw surefire-report:report-only')
-                    runCmd('./mvnw surefire-report:failsafe-report-only')
+                    if (isUnix()) {
+                        sh './mvnw surefire-report:report-only'
+                        sh './mvnw surefire-report:failsafe-report-only'
+                    } else {
+                        bat './mvnw surefire-report:report-only'
+                        bat './mvnw surefire-report:failsafe-report-only'
+                    }
                 }
             }
         }
@@ -110,7 +155,11 @@ pipeline {
         stage('Jacoco Report') {
             steps {
                 script {
-                    runCmd('./mvnw jacoco:report')
+                    if (isUnix()) {
+                        sh './mvnw jacoco:report'
+                    } else {
+                        bat './mvnw jacoco:report'
+                    }
                 }
             }
         }
@@ -118,7 +167,11 @@ pipeline {
         stage('Package') {
             steps {
                 script {
-                    runCmd('./mvnw package -DskipTests')
+                    if (isUnix()) {
+                        sh './mvnw package -DskipTests'
+                    } else {
+                        bat './mvnw package -DskipTests'
+                    }
                 }
             }
         }
@@ -126,7 +179,11 @@ pipeline {
         stage('Verify') {
             steps {
                 script {
-                    runCmd('./mvnw verify -DskipTests')
+                    if (isUnix()) {
+                        sh './mvnw verify -DskipTests'
+                    } else {
+                        bat './mvnw verify -DskipTests'
+                    }
                 }
             }
         }
@@ -134,7 +191,11 @@ pipeline {
         stage('Install') {
             steps {
                 script {
-                    runCmd('./mvnw install -DskipTests')
+                    if (isUnix()) {
+                        sh './mvnw install -DskipTests'
+                    } else {
+                        bat './mvnw install -DskipTests'
+                    }
                 }
             }
         }
@@ -152,14 +213,6 @@ pipeline {
                     }
                 }
             }
-        }
-    }
-
-    def runCmd(cmd) {
-        if (isUnix()) {
-            sh cmd
-        } else {
-            bat cmd
         }
     }
 }
