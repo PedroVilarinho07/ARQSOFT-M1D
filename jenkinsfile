@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     environment {
-        GITHUB_URL = ''
-        GITHUB_BRANCH = ''
-        GITHUB_CREDENTIALS = ''
+        GITHUB_URL = 'https://github.com/PedroVilarinho07/ARQSOFT-M1D.git'
+        GITHUB_BRANCH = 'main'
+        GITHUB_CREDENTIALS = 'Password_for_Github'
 
         JENKINS_NODE_COOKIE = "dontKillMe"
     }
