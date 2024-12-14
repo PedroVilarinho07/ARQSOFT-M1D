@@ -22,9 +22,9 @@ pipeline {
             steps {
                 script {
                     if (isUnix()) {
-                        sh './mvnw clean'
+                        sh 'mvn clean'
                     } else {
-                        bat './mvnw clean'
+                        bat 'mvn clean'
                     }
                 }
             }
@@ -34,9 +34,9 @@ pipeline {
             steps {
                 script {
                     if (isUnix()) {
-                        sh './mvnw validate'
+                        sh 'mvn validate'
                     } else {
-                        bat './mvnw validate'
+                        bat 'mvn validate'
                     }
                 }
             }
@@ -46,9 +46,9 @@ pipeline {
             steps {
                 script {
                     if (isUnix()) {
-                        sh './mvnw compile'
+                        sh 'mvn compile'
                     } else {
-                        bat './mvnw compile'
+                        bat 'mvn compile'
                     }
                 }
             }
@@ -58,9 +58,9 @@ pipeline {
             steps {
                 script {
                     if (isUnix()) {
-                        sh './mvnw checkstyle:checkstyle'
+                        sh 'mvn checkstyle:checkstyle'
                     } else {
-                        bat './mvnw checkstyle:checkstyle'
+                        bat 'mvn checkstyle:checkstyle'
                     }
                 }
             }
@@ -70,9 +70,9 @@ pipeline {
             steps {
                 script {
                     if (isUnix()) {
-                        sh './mvnw spotbugs:spotbugs'
+                        sh 'mvn spotbugs:spotbugs'
                     } else {
-                        bat './mvnw spotbugs:spotbugs'
+                        bat 'mvn spotbugs:spotbugs'
                     }
                 }
             }
@@ -82,9 +82,9 @@ pipeline {
             steps {
                 script {
                     if (isUnix()) {
-                        sh './mvnw javadoc:javadoc'
+                        sh 'mvn javadoc:javadoc'
                     } else {
-                        bat './mvnw javadoc:javadoc'
+                        bat 'mvn javadoc:javadoc'
                     }
                 }
             }
@@ -94,9 +94,9 @@ pipeline {
             steps {
                 script {
                     if (isUnix()) {
-                        sh './mvnw test'
+                        sh 'mvn test'
                     } else {
-                        bat './mvnw test'
+                        bat 'mvn test'
                     }
                 }
             }
@@ -106,9 +106,9 @@ pipeline {
             steps {
                 script {
                     if (isUnix()) {
-                        sh './mvnw failsafe:integration-test'
+                        sh 'mvn failsafe:integration-test'
                     } else {
-                        bat './mvnw failsafe:integration-test'
+                        bat 'mvn failsafe:integration-test'
                     }
                 }
             }
@@ -118,9 +118,9 @@ pipeline {
             steps {
                 script {
                     if (isUnix()) {
-                        sh './mvnw test -Dtest=**/*AcceptanceTestCase'
+                        sh 'mvn test -Dtest=**/*AcceptanceTestCase'
                     } else {
-                        bat './mvnw test -Dtest=**/*AcceptanceTestCase'
+                        bat 'mvn test -Dtest=**/*AcceptanceTestCase'
                     }
                 }
             }
@@ -130,9 +130,9 @@ pipeline {
             steps {
                 script {
                     if (isUnix()) {
-                        sh './mvnw test-compile org.pitest:pitest-maven:mutationCoverage'
+                        sh 'mvn test-compile org.pitest:pitest-maven:mutationCoverage'
                     } else {
-                        bat './mvnw test-compile org.pitest:pitest-maven:mutationCoverage'
+                        bat 'mvn test-compile org.pitest:pitest-maven:mutationCoverage'
                     }
                 }
             }
@@ -142,11 +142,11 @@ pipeline {
             steps {
                 script {
                     if (isUnix()) {
-                        sh './mvnw surefire-report:report-only'
-                        sh './mvnw surefire-report:failsafe-report-only'
+                        sh 'mvn surefire-report:report-only'
+                        sh 'mvn surefire-report:failsafe-report-only'
                     } else {
-                        bat './mvnw surefire-report:report-only'
-                        bat './mvnw surefire-report:failsafe-report-only'
+                        bat 'mvn surefire-report:report-only'
+                        bat 'mvn surefire-report:failsafe-report-only'
                     }
                 }
             }
@@ -156,9 +156,9 @@ pipeline {
             steps {
                 script {
                     if (isUnix()) {
-                        sh './mvnw jacoco:report'
+                        sh 'mvn jacoco:report'
                     } else {
-                        bat './mvnw jacoco:report'
+                        bat 'mvn jacoco:report'
                     }
                 }
             }
@@ -168,9 +168,9 @@ pipeline {
             steps {
                 script {
                     if (isUnix()) {
-                        sh './mvnw package -DskipTests'
+                        sh 'mvn package -DskipTests'
                     } else {
-                        bat './mvnw package -DskipTests'
+                        bat 'mvn package -DskipTests'
                     }
                 }
             }
@@ -180,9 +180,9 @@ pipeline {
             steps {
                 script {
                     if (isUnix()) {
-                        sh './mvnw verify -DskipTests'
+                        sh 'mvn verify -DskipTests'
                     } else {
-                        bat './mvnw verify -DskipTests'
+                        bat 'mvn verify -DskipTests'
                     }
                 }
             }
@@ -192,9 +192,9 @@ pipeline {
             steps {
                 script {
                     if (isUnix()) {
-                        sh './mvnw install -DskipTests'
+                        sh 'mvn install -DskipTests'
                     } else {
-                        bat './mvnw install -DskipTests'
+                        bat 'mvn install -DskipTests'
                     }
                 }
             }
