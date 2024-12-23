@@ -1,6 +1,5 @@
 package pt.psoft.g1.psoftg1.genremanagement.model;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -15,7 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @AutoConfigureMockMvc
 @SpringBootTest(classes = PsoftG1Application.class)
-public class GenreControllerIntegrationTest {
+public class GenreControllerIT {
 
     @Autowired
     private MockMvc mockMvc;
