@@ -1,4 +1,4 @@
-/*package pt.psoft.g1.psoftg1.genremanagement.model;
+package pt.psoft.g1.psoftg1.genremanagement.model;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -62,4 +62,3 @@ public class GenreControllerIntegrationTest {
                 .andExpect(jsonPath("$.content").isNotEmpty());
     }
 }
-*/
