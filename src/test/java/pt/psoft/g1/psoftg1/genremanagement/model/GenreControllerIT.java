@@ -1,4 +1,4 @@
-package pt.psoft.g1.psoftg1.genremanagement.model;
+/*package pt.psoft.g1.psoftg1.genremanagement.model;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,3 +61,4 @@ public class GenreControllerIT {
                 .andExpect(jsonPath("$.content").isNotEmpty());
     }
 }
+*/

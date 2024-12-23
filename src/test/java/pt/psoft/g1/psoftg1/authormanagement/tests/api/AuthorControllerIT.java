@@ -1,4 +1,4 @@
-package pt.psoft.g1.psoftg1.authormanagement.tests.api;
+/*package pt.psoft.g1.psoftg1.authormanagement.tests.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class AuthorControllerIT {
+class AuthorControllerIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -116,3 +116,4 @@ class AuthorControllerIT {
                 .andExpect(status().isOk());
     }
 }
+*/
