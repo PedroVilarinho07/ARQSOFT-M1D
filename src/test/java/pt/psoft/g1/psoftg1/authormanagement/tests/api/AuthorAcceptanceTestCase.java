@@ -1,4 +1,4 @@
-/*package pt.psoft.g1.psoftg1.authormanagement.tests.api;
+package pt.psoft.g1.psoftg1.authormanagement.tests.api;
 
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
@@ -20,7 +20,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class AuthorAcceptanceTest {
+public class AuthorAcceptanceTestCase {
 
 
 
@@ -171,4 +171,3 @@ public class AuthorAcceptanceTest {
                 .statusCode(HttpStatus.OK.value());
     }
 }
-*/
