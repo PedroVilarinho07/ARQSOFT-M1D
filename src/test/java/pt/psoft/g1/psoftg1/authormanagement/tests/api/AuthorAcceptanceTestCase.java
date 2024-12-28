@@ -1,173 +1,103 @@
 package pt.psoft.g1.psoftg1.authormanagement.tests.api;
 
-import io.restassured.RestAssured;
-import io.restassured.response.Response;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.boot.test.web.server.LocalServerPort;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.web.context.request.WebRequest;
-import pt.psoft.g1.psoftg1.authormanagement.dto.request.CreateAuthorRequest;
-import pt.psoft.g1.psoftg1.usermanagement.services.UserService;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
+import pt.psoft.g1.psoftg1.authormanagement.factories.AuthorNumberFactory;
+import pt.psoft.g1.psoftg1.authormanagement.factories.BioFactory;
+import pt.psoft.g1.psoftg1.authormanagement.model.Author;
+import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
 
-import static io.restassured.RestAssured.*;
-import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Tag;
+import pt.psoft.g1.psoftg1.shared.factories.NameFactory;
+import pt.psoft.g1.psoftg1.shared.factories.PhotoFactory;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class AuthorAcceptanceTestCase {
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-
-    @MockBean
-    private UserService userService;
-
-    @LocalServerPort
-    private int port;
+@ExtendWith(SpringExtension.class)
+@SpringBootTest
+@AutoConfigureMockMvc
+@Transactional
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
+@Tag("IntegrationTest")
+class AuthorAcceptanceTestCase {
 
     @Autowired
-    private WebApplicationContext context;
+    private MockMvc mockMvc;
+
+    @Autowired
+    private AuthorRepository authorRepository;
+
+    private Author author;
 
     @BeforeEach
-    public void setup() {
-        RestAssured.port = port;
-        RestAssured.basePath = "/api/authors";
-        RestAssured.baseURI = "http://localhost";
+    public void setUp() {
+
+        AuthorNumberFactory authorNumberFactory = new AuthorNumberFactory();
+        NameFactory nameFactory = new NameFactory();
+        BioFactory bioFactory = new BioFactory();
+        PhotoFactory photoFactory = new PhotoFactory();
+
+        author = new Author(
+                "1",
+                "Madalena Fernandes",
+                "Excelente Cronista",
+                "photoTest.jpg",
+                authorNumberFactory,
+                nameFactory,
+                bioFactory,
+                photoFactory
+        );
+
+        authorRepository.save(author);
+    }
+
+    @AfterEach
+    public void tearDown() {
+        authorRepository.delete(author);
     }
 
     @Test
-    public void testCreateAuthorSuccessfully() {
-        // Simulando uma requisição válida para criar um autor
-        CreateAuthorRequest request = new CreateAuthorRequest();
-        request.setName("Author Name");
-        request.setBio("This is a test bio for the author.");
-        request.setPhoto(null); // Sem foto para simplificar
-
-        given()
-                .contentType("application/json")
-                .body(request)
-                .when()
-                .post("/")
-                .then()
-                .statusCode(HttpStatus.CREATED.value())
-                .body("name", equalTo("Author Name"))
-                .body("bio", equalTo("This is a test bio for the author"));
+    @WithMockUser(username = "librarian@email.pt", authorities = { "ROLE_LIBRARIAN" })
+    public void whenGetAuthorByName_thenReturnAuthor() throws Exception {
+        mockMvc.perform(get("/api/authors")
+                        .param("name", author.getName())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items[0].name").value("Madalena Fernandes"))
+                .andExpect(jsonPath("$.items[0].bio").value("Excelente Cronista"));
     }
 
     @Test
-    public void testCreateAuthorFailsWithoutName() {
-        // Simulando uma requisição inválida (sem nome)
-        CreateAuthorRequest request = new CreateAuthorRequest();
-        request.setBio("This is a test bio for the author.");
-        request.setPhoto(null);
-
-        given()
-                .contentType("application/json")
-                .body(request)
-                .when()
-                .post("/")
-                .then()
-                .statusCode(HttpStatus.BAD_REQUEST.value())
-                .body("message", containsString("Name cannot be null"));
+    @WithMockUser(username = "reader@email.pt", authorities = { "ROLE_READER" })
+    public void whenGetAuthorByNumber_thenReturnAuthorBooksNumber() throws Exception {
+        mockMvc.perform(get("/api/authors/" + author.getAuthorNumber() + "/books")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items").isArray())
+                .andExpect(jsonPath("$.items").isEmpty());
     }
 
     @Test
-    public void testUpdateAuthorSuccessfully() {
-        // Primeiro, criar um autor
-        CreateAuthorRequest createRequest = new CreateAuthorRequest();
-        createRequest.setName("Author Name");
-        createRequest.setBio("This is a test bio for the author.");
-        createRequest.setPhoto(null);
-
-        Response createResponse = given()
-                .contentType("application/json")
-                .body(createRequest)
-                .when()
-                .post("/")
-                .then()
-                .statusCode(HttpStatus.CREATED.value())
-                .extract().response();
-
-        String authorNumber = createResponse.path("authorNumber");
-
-        // Atualizar o autor criado
-        var updateRequest = new pt.psoft.g1.psoftg1.authormanagement.dto.request.UpdateAuthorRequest();
-        updateRequest.setBio("Updated Bio");
-        updateRequest.setName("Updated Name");
-        updateRequest.setPhoto(null);
-
-        given()
-                .contentType("application/json")
-                .header("If-Match", "1") // Simulando controle de concorrência
-                .body(updateRequest)
-                .when()
-                .patch("/{authorNumber}", authorNumber)
-                .then()
-                .statusCode(HttpStatus.OK.value())
-                .body("name", equalTo("Updated Name"))
-                .body("bio", equalTo("Updated Bio"));
-    }
-
-    @Test
-    public void testGetAuthorByNumber() {
-        // Primeiro, criar um autor
-        CreateAuthorRequest createRequest = new CreateAuthorRequest();
-        createRequest.setName("Author Name");
-        createRequest.setBio("This is a test bio for the author.");
-        createRequest.setPhoto(null);
-
-        Response createResponse = given()
-                .contentType("application/json")
-                .body(createRequest)
-                .when()
-                .post("/")
-                .then()
-                .statusCode(HttpStatus.CREATED.value())
-                .extract().response();
-
-        String authorNumber = createResponse.path("authorNumber");
-
-        // Buscar o autor criado
-        given()
-                .contentType("application/json")
-                .when()
-                .get("/{authorNumber}", authorNumber)
-                .then()
-                .statusCode(HttpStatus.OK.value())
-                .body("name", equalTo("Author Name"))
-                .body("bio", equalTo("This is a test bio for the author."));
-    }
-
-    @Test
-    public void testDeleteAuthorPhoto() {
-        // Primeiro, criar um autor com foto
-        CreateAuthorRequest createRequest = new CreateAuthorRequest();
-        createRequest.setName("Author Name");
-        createRequest.setBio("This is a test bio for the author.");
-        createRequest.setPhotoURI("example_photo_uri.jpg");
-
-        Response createResponse = given()
-                .contentType("application/json")
-                .body(createRequest)
-                .when()
-                .post("/")
-                .then()
-                .statusCode(HttpStatus.CREATED.value())
-                .extract().response();
-
-        String authorNumber = createResponse.path("authorNumber");
-
-        // Deletar a foto do autor criado
-        given()
-                .contentType("application/json")
-                .when()
-                .delete("/{authorNumber}/photo", authorNumber)
-                .then()
-                .statusCode(HttpStatus.OK.value());
+    @WithMockUser(username = "reader@email.pt", authorities = { "ROLE_READER" })
+    public void whenGetAuthorByAuthorNumber_thenReturnAuthorDetails() throws Exception {
+        mockMvc.perform(get("/api/authors/" + author.getAuthorNumber())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Madalena Fernandes"))
+                .andExpect(jsonPath("$.bio").value("Excelente Cronista"));
     }
 }
