@@ -1,16 +1,17 @@
-/*package pt.psoft.g1.psoftg1.authormanagement.tests.api;
+package pt.psoft.g1.psoftg1.authormanagement.tests.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import pt.psoft.g1.psoftg1.authormanagement.dto.request.CreateAuthorRequest;
 import pt.psoft.g1.psoftg1.authormanagement.dto.request.UpdateAuthorRequest;
-import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -27,6 +28,7 @@ class AuthorControllerIntegrationTest {
 
     @Test
     @DisplayName("Should create a new author")
+    @WithMockUser(username = "librarian@email.pt", authorities = { "ROLE_LIBRARIAN" })
     void createAuthor() throws Exception {
         CreateAuthorRequest request = new CreateAuthorRequest();
         request.setName("John Doe");
@@ -44,31 +46,40 @@ class AuthorControllerIntegrationTest {
 
     @Test
     @DisplayName("Should update an existing author")
+    @WithMockUser(username = "librarian@email.pt", authorities = { "ROLE_LIBRARIAN" })
     void updateAuthor() throws Exception {
-        // Creating a new author first
+        // Step 1: Create a new author
         CreateAuthorRequest createRequest = new CreateAuthorRequest();
         createRequest.setName("Jane Doe");
         createRequest.setBio("A promising author.");
         createRequest.setPhotoURI(null);
 
-        mockMvc.perform(post("/api/authors")
+        String postResponse = mockMvc.perform(post("/api/authors")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createRequest)))
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
 
+        String authorNumber = JsonPath.parse(postResponse).read("$.authorNumber");
+
+        // Step 2: Update the author's bio
         UpdateAuthorRequest updateRequest = new UpdateAuthorRequest();
         updateRequest.setBio("A promising author with several new books.");
 
-        mockMvc.perform(patch("/api/authors/1")
-                        .header("If-Match", "1") // Simulando controle de concorrência
+        mockMvc.perform(patch("/api/authors/" + authorNumber)
+                        .header("If-Match", "1") // Use correct ETag or version
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.bio").value("A promising author with several new books."));
     }
 
+
+
+
     @Test
     @DisplayName("Should fetch an author by author number")
+    @WithMockUser(username = "reader@email.pt", authorities = { "ROLE_READER" })
     void fetchAuthorByNumber() throws Exception {
         // Creating a new author first
         CreateAuthorRequest request = new CreateAuthorRequest();
@@ -90,6 +101,7 @@ class AuthorControllerIntegrationTest {
 
     @Test
     @DisplayName("Should return top 5 authors by lending stats")
+    @WithMockUser(username = "reader@email.pt", authorities = { "ROLE_READER" })
     void fetchTop5AuthorsByLending() throws Exception {
         mockMvc.perform(get("/api/authors/top5")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -99,6 +111,7 @@ class AuthorControllerIntegrationTest {
 
     @Test
     @DisplayName("Should fetch books of a specific author")
+    @WithMockUser(username = "reader@email.pt", authorities = { "ROLE_READER" })
     void fetchBooksByAuthor() throws Exception {
         // Simulate existing author and books
         mockMvc.perform(get("/api/authors/1/books")
@@ -109,6 +122,7 @@ class AuthorControllerIntegrationTest {
 
     @Test
     @DisplayName("Should delete an author's photo")
+    @WithMockUser(username = "librarian@email.pt", authorities = { "ROLE_LIBRARIAN" })
     void deleteAuthorPhoto() throws Exception {
         // Assuming an author with a photo exists
         mockMvc.perform(delete("/api/authors/1/photo")
@@ -116,4 +130,3 @@ class AuthorControllerIntegrationTest {
                 .andExpect(status().isOk());
     }
 }
-*/
