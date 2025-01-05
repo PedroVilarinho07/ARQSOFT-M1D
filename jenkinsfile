@@ -113,14 +113,15 @@ pipeline {
                 }
             }
         }
-
+        
         stage('Acceptance Tests') {
             steps {
                 script {
                     if (isUnix()) {
-                        sh 'mvn test -Dtest=**/*AcceptanceTestCase'
+                        sh './mvnw test -Dtest=**/*AcceptanceTestCase'
+                        
                     } else {
-                        bat 'mvn test -Dtest=**/*AcceptanceTestCase'
+                        bat 'mvnw test -Dtest=**\\*AcceptanceTestCase'
                     }
                 }
             }
