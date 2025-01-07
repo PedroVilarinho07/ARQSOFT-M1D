@@ -4,7 +4,7 @@ pipeline {
     environment {
         GITHUB_URL = 'https://github.com/PedroVilarinho07/ARQSOFT-M1D.git'
         GITHUB_BRANCH = 'main'
-        GITHUB_CREDENTIALS = '533dd038-5a7c-466f-9436-a0c62ee5ad1a'
+        GITHUB_CREDENTIALS = 'Password_for_Github'
 
         JENKINS_NODE_COOKIE = "dontKillMe"
     }
