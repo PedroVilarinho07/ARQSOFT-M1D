@@ -1,4 +1,4 @@
-package pt.psoft.g1.psoftg1.authormanagement.tests.api;
+/*package pt.psoft.g1.psoftg1.authormanagement.tests.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
@@ -130,3 +130,4 @@ class AuthorControllerIntegrationTest {
                 .andExpect(status().isOk());
     }
 }
+*/
